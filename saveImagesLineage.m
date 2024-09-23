@@ -1,6 +1,6 @@
 %takes video array, video title, and desired img_format (e.g. '.png')
 %produces directory in current directory with every frame as individual image
-function identifiers = saveImagesLineage(video_array,frameNum,bboxes,videoPath)
+function [identifiers,relVsNonRel] = saveImagesLineage(video_array,frameNum,bboxes,videoPath,saveTrashImages,minLength,minWidth)
     warning('off','MATLAB:MKDIR:DirectoryExists');
     frames = length(video_array);
     [~,videoTitle,~] = fileparts(videoPath);
@@ -11,17 +11,23 @@ function identifiers = saveImagesLineage(video_array,frameNum,bboxes,videoPath)
     % mkdir (filename);
     % cd (filename);
     identifiers = "";
+    relVsNonRel = 0;
     for k=1:frames
         [l,w] = size(cell2mat(video_array(k)));
         fileNameFormat = sprintf('f%dx%dy%dw%dh%d_%s.png',frameNum,bboxes(k,1),bboxes(k,2),bboxes(k,3),bboxes(k,4),videoTitle); 
-        if l*w < 1600
-            img_file = strcat(".\TestingOutputs\SmallObjects\",fileNameFormat);
-            imwrite(cell2mat(video_array(k)),img_file);
+
+        if (l < minLength | w < minWidth) & saveTrashImages  
+            img_file = strcat(".\ZooPlanktonOutput_",string(datetime("today","Format","dd_MM_yy")),"\NonRelaventObjects_,",string(datetime("today","Format","dd_MM_yy")),"\",fileNameFormat);
+            imwrite(uint8(cell2mat(video_array(k))),img_file);
+            identifiers = cat(1,identifiers,string(fileNameFormat));
+            relVsNonRel = cat(1,relVsNonRel,0);
         else
-            img_file = strcat(".\TestingOutputs\LargeObjects\",fileNameFormat);
-            imwrite(cell2mat(video_array(k)),img_file);
+            img_file = strcat(".\ZooPlanktonOutput_",string(datetime("today","Format","dd_MM_yy")),"\DataSet_",string(datetime("today","Format","dd_MM_yy")),"\",fileNameFormat);
+            imwrite(uint8(cell2mat(video_array(k))),img_file);
+            identifiers = cat(1,identifiers,string(fileNameFormat));
+            relVsNonRel = cat(1,relVsNonRel,1);
         end
-        identifiers = cat(1,identifiers,string(fileNameFormat));
     end
     identifiers(1) = [];
+    relVsNonRel(1) = [];
 end
