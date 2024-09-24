@@ -3,8 +3,8 @@ function scores = classifySegmentedImages(trainedNet,imds,confidenceThreshold,ap
     [l,w] = size(imds.preview);
     Xtrain = reshape(cat(3,X{:}),[l,w,1,length(X)]);
     % scores = minibatchpredict(trainedNet,imds);
-    scores = trainedNet.predict(dlarray(double(Xtrain),'SSCB'));
-    [a,b] = max(scores,[],1);
+    scores = trainedNet.predict(dlarray(double(Xtrain),'SSCB'))
+    [a,b] = max(scores,[],1)
     % accuracy = mean(categorical(b)' == imds.Labels)
     % size(scores)
     % classList = (repmat([1:size(scores,1)],length(X),1))';
@@ -20,7 +20,7 @@ function scores = classifySegmentedImages(trainedNet,imds,confidenceThreshold,ap
     % make className directories
     mkdir ClassificationOutput
     for z = 1:size(classCounts,2)
-        mkdir(strcat(dirLocation,'\ClassificationOutput\',num2str(z)))
+        mkdir(strcat(dirLocation,'/ClassificationOutput/',num2str(z)))
     end
     % scores = reshape(scores,size(scores,2),[])
     b = categorical(b);
@@ -29,11 +29,11 @@ function scores = classifySegmentedImages(trainedNet,imds,confidenceThreshold,ap
         if a(i) > confidenceThreshold
             % save image to directory
             classCounts(b(i)) = classCounts(b(i)) + 1;
-            copyfile(cell2mat(imds.Files(i)),strcat(dirLocation,'\ClassificationOutput\',string(b(i))))
+            copyfile(cell2mat(imds.Files(i)),strcat(dirLocation,'/ClassificationOutput/',string(b(i))))
         else
             class = size(scores,2) + 1;
             classCounts(class) = classCounts(class) + 1;
-            copyfile(cell2mat(imds.Files(i)),strcat(dirLocation,'\ClassificationOutput\',num2str(class)))
+            copyfile(cell2mat(imds.Files(i)),strcat(dirLocation,'/ClassificationOutput/',num2str(class)))
             % move to low confidence folder
         end    
     end
