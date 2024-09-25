@@ -15,7 +15,7 @@ function flatfielded_video = flatfield(original, calibration_frame, brightness)
     for k = 1:num_frames
         for i = 1:length
             for j = 1:width
-        flatfielded_video(i,j,k) = uint8((uint16(original(i,j,k))*uint16(average_values(1, 1, k) * brightness)) / uint16(calibration_frame(i,j)));
+                flatfielded_video(i,j,k) = uint8((uint16(original(i,j,k))*uint16(average_values(1, 1, k) * brightness)) / uint16(calibration_frame(i,j)));
             end
         end
     end

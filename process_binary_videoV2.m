@@ -8,7 +8,7 @@ function processed_vid = process_binary_videoV2(vid,thresh,h_vars)
     clear BW
     filtered = remove_small_objects(masked, h_vars(2));
     clear masked
-    processed_vid = domain_expansion(filtered, h_vars(3));
+    processed_vid = imdilate(filtered,strel("disk",h_vars(3)));
     clear filtered
 end
 
