@@ -6,10 +6,10 @@
 ### Version Notes
 _____________
 ### v0.7.2-prerelease:
--Added 2 more models, GoogLeNet and DarkNet
--Included iterative model saving to prevent overwriting models after multiple runs
--Increased max epochs to 100
--note: 2023a users will experience errors due to range sliders not being implemented until 2023b
+* Added 2 more models, GoogLeNet and DarkNet
+* Included iterative model saving to prevent overwriting models after multiple runs
+* Increased max epochs to 100
+* note: 2023a users will experience errors due to range sliders not being implemented until 2023b
 ### v0.7.1-prerelease:
 * fixed transition from segmentation tab to classification
 * note: 2023 users may experience errors when training/classifying, some functions currently not cross compatible
