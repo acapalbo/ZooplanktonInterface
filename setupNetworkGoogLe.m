@@ -1,5 +1,5 @@
 function net = setupNetworkGoogLe(inputSize,numOfClasses)
-net = dlnetwork;
+net = layerGraph();
 tempNet = [
     imageInputLayer(inputSize,"Name","data")
     convolution2dLayer([7 7],64,"Name","conv1-7x7_s2","BiasLearnRateFactor",2,"Padding",[3 3 3 3],"Stride",[2 2])
@@ -349,5 +349,5 @@ net = connectLayers(net,"inception_5b-relu_1x1","inception_5b-output/in1");
 net = connectLayers(net,"inception_5b-relu_3x3","inception_5b-output/in2");
 net = connectLayers(net,"inception_5b-relu_5x5","inception_5b-output/in3");
 net = connectLayers(net,"inception_5b-relu_pool_proj","inception_5b-output/in4");
-net = initialize(net);
+net = dlnetwork(net);
 end
