@@ -1,6 +1,6 @@
 # ZooplanktonInterface
 
-## Graphical Interface for Zooplankton Segmentation and Classification algorithm. Most up to date release is v0.5.5-prerelease, it can be found in the releases/tags tab.
+## Graphical Interface for Zooplankton Segmentation and Classification algorithm. Most up to date release is v0.7.2-prerelease, it can be found in the releases/tags tab.
 
 
 ### Version Notes
