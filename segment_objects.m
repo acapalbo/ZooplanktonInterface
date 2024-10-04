@@ -9,7 +9,7 @@
 % bounding padding = h_vars(5)
 % pm_frames = h_vars(6)
 
-function dataSetFilePath = segment_objects(vid,BW,h_vars,videoPath,saveTrashImages,minLength,minWidth)
+function dataSetFilePath = segment_objects(vid,BW,h_vars,videoPath,saveTrashImages,minLength,minWidth,outputDir)
     warning('off','MATLAB:MKDIR:DirectoryExists');
 
     % tPrep = tic;
@@ -27,10 +27,10 @@ function dataSetFilePath = segment_objects(vid,BW,h_vars,videoPath,saveTrashImag
     delete(gcp('nocreate'));
     pool = parpool("Threads");
     
-    mkdir(strcat("ZooPlanktonOutput_",string(datetime("today","Format","dd_MM_yy"))));
-    mkdir(strcat("ZooPlanktonOutput_",string(datetime("today","Format","dd_MM_yy")),"\TableInfo_",string(datetime("today","Format","dd_MM_yy"))));
-    mkdir(strcat("ZooPlanktonOutput_",string(datetime("today","Format","dd_MM_yy")),"\NonRelevantObjects_",string(datetime("today","Format","dd_MM_yy"))));
-    mkdir(strcat("ZooPlanktonOutput_",string(datetime("today","Format","dd_MM_yy")),"\DataSet_",string(datetime("today","Format","dd_MM_yy"))));
+    % mkdir(strcat("ZooPlanktonOutput_",string(datetime("today","Format","dd_MM_yy"))));
+    mkdir(strcat(outputDir,"\TableInfo_",string(datetime("today","Format","dd_MM_yy"))));
+    mkdir(strcat(outputDir,"\NonRelevantObjects_",string(datetime("today","Format","dd_MM_yy"))));
+    mkdir(strcat(outputDir,"\DataSet_",string(datetime("today","Format","dd_MM_yy"))));
     opts = parforOptions(pool);
     
     parfor(k = 1:frame_num,opts)
@@ -54,14 +54,14 @@ function dataSetFilePath = segment_objects(vid,BW,h_vars,videoPath,saveTrashImag
         objectArray = segmented_object_cleanup(final_bboxes,raw_frame);
         % fprintf("%d objects saved to 'Valid'\n", size(objectArray,3));
         
-        [identifiers,relVsNonRel] = saveImagesLineage(objectArray,k,final_bboxes,videoPath,saveTrashImages, minLength,minWidth);
+        [identifiers,relVsNonRel] = saveImagesLineage(objectArray,k,final_bboxes,videoPath,saveTrashImages, minLength,minWidth,outputDir);
         infoTable = table(repmat(videoPath,size(final_bboxes,1),1),final_bboxes(:,1),final_bboxes(:,2),final_bboxes(:,3),final_bboxes(:,4),(1:size(final_bboxes,1))',identifiers,repmat(-1,size(final_bboxes,1),1),relVsNonRel);
         infoTable.Properties.VariableNames = {'VideoPath','BoundingX','BoundingY','BoundingWidth','BoundingHeight','Object#','FileName','ClassName','RelevantVSNonRelevant'};
-        writetable(infoTable,strcat(".\ZooPlanktonOutput_",string(datetime("today","Format","dd_MM_yy")),"\TableInfo_",string(datetime("today","Format","dd_MM_yy")),"\Frame_",num2str(k),".csv"));
+        writetable(infoTable,strcat(outputDir,"\TableInfo_",string(datetime("today","Format","dd_MM_yy")),"\Frame_",num2str(k),".csv"));
         writematrix(strcat(startT," ",num2str(k,'%04.f'),string(datetime('now','TimeZone','local','Format','HHmmss'))),"timeOutput.txt",'WriteMode','append')
     end
     tEnd = toc(tStart);
     fprintf("<strong>Total Segmentation Time: %f s</strong>\n",tEnd)
-    dataSetFilePath = strcat("ZooPlanktonOutput_",string(datetime("today","Format","dd_MM_yy")),"\DataSet_",string(datetime("today","Format","dd_MM_yy")));
+    dataSetFilePath = strcat(outputDir,"\DataSet_",string(datetime("today","Format","dd_MM_yy")));
     % begin sorting
 end

@@ -31,7 +31,11 @@ function final_bboxes = segment_objects_core(BW,frame_idx,raw_frame,h_vars)
     
             % BW_cropped = crop_bounding_initial(BW,bounding_pos,200);
             % class(allPixelIdx)
-            check_movement = movementCheckRegion3(BW,h_vars(5),frame_idx,props(i).PixelIdxList);
+            if h_vars(5) > 0
+                check_movement = movementCheckRegion3(BW,h_vars(5),frame_idx,props(i).PixelIdxList);
+            else
+                check_movement = 0;
+            end
             % fprintf("Moves %d frames\n",check_movement)
 
             if check_movement <= h_vars(5)

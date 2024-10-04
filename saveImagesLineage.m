@@ -1,6 +1,6 @@
 %takes video array, video title, and desired img_format (e.g. '.png')
 %produces directory in current directory with every frame as individual image
-function [identifiers,relVsNonRel] = saveImagesLineage(video_array,frameNum,bboxes,videoPath,saveTrashImages,minLength,minWidth)
+function [identifiers,relVsNonRel] = saveImagesLineage(video_array,frameNum,bboxes,videoPath,saveTrashImages,minLength,minWidth,outputDir)
     warning('off','MATLAB:MKDIR:DirectoryExists');
     frames = length(video_array);
     [~,videoTitle,~] = fileparts(videoPath);
@@ -17,12 +17,12 @@ function [identifiers,relVsNonRel] = saveImagesLineage(video_array,frameNum,bbox
         fileNameFormat = sprintf('f%dx%dy%dw%dh%d_%s.png',frameNum,bboxes(k,1),bboxes(k,2),bboxes(k,3),bboxes(k,4),videoTitle); 
 
         if (l < minLength | w < minWidth) & saveTrashImages  
-            img_file = strcat(".\ZooPlanktonOutput_",string(datetime("today","Format","dd_MM_yy")),"\NonRelaventObjects_,",string(datetime("today","Format","dd_MM_yy")),"\",fileNameFormat);
+            img_file = strcat(outputDir,"\NonRelevantObjects_",string(datetime("today","Format","dd_MM_yy")),"\",fileNameFormat);
             imwrite(uint8(cell2mat(video_array(k))),img_file);
             identifiers = cat(1,identifiers,string(fileNameFormat));
             relVsNonRel = cat(1,relVsNonRel,0);
-        else
-            img_file = strcat(".\ZooPlanktonOutput_",string(datetime("today","Format","dd_MM_yy")),"\DataSet_",string(datetime("today","Format","dd_MM_yy")),"\",fileNameFormat);
+        else 
+            img_file = strcat(outputDir,"\DataSet_",string(datetime("today","Format","dd_MM_yy")),"\",fileNameFormat);
             imwrite(uint8(cell2mat(video_array(k))),img_file);
             identifiers = cat(1,identifiers,string(fileNameFormat));
             relVsNonRel = cat(1,relVsNonRel,1);

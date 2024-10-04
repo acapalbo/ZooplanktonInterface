@@ -1,6 +1,6 @@
 % takes filename and grayscaled video (length, width, frame), creates file
-function write_avi(filename, frames)
-    v = VideoWriter(filename,"Grayscale AVI");
+function write_aviV2(frames,filename)
+    v = VideoWriter(filename);
     open(v)
     writeVideo(v, frames)
     close(v)
