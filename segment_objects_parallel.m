@@ -9,14 +9,14 @@
 % bounding padding = h_vars(5)
 % pm_frames = h_vars(6)
 
-function dataSetFilePath = segment_objects(vid,BW,h_vars,videoPath,saveTrashImages,minLength,minWidth,outputDir)
+function dataSetFilePath = segment_objects_parallel(vid,BW,h_vars,videoPath,saveTrashImages,minLength,minWidth,outputDir,parallelMethod,numWorkers)
     warning('off','MATLAB:MKDIR:DirectoryExists');
 
     % tPrep = tic;
     % BW = process_binary_video(vid,thresh,method,h_vars);
 
-    % BWconst = parallel.pool.Constant(BW);
-    % vidConst = parallel.pool.Constant(vid);
+    BWconst = parallel.pool.Constant(BW);
+    vidConst = parallel.pool.Constant(vid);
 
     % tEndPrep = toc(tPrep);
     % fprintf("<strong>Video Prep: %f s</strong>\n",tEndPrep)
@@ -24,19 +24,19 @@ function dataSetFilePath = segment_objects(vid,BW,h_vars,videoPath,saveTrashImag
     tStart = tic;
     
     frame_num = size(vid,3);
-    % delete(gcp('nocreate'));
-    % pool = parpool("Threads");
+    delete(gcp('nocreate'));
+    pool = parpool(parallelMethod,[1 numWorkers]);
     
     % mkdir(strcat("ZooPlanktonOutput_",string(datetime("today","Format","dd_MM_yy"))));
     mkdir(strcat(outputDir,"/TableInfo_",string(datetime("today","Format","dd_MM_yy"))));
     mkdir(strcat(outputDir,"/NonRelevantObjects_",string(datetime("today","Format","dd_MM_yy"))));
     mkdir(strcat(outputDir,"/DataSet_",string(datetime("today","Format","dd_MM_yy"))));
-    % opts = parforOptions(pool);
+    opts = parforOptions(pool);
     
-    for k = 1:frame_num
+    parfor(k = 1:frame_num,opts)
         startT = strcat(num2str(k,'%04.f'),string(datetime('now','TimeZone','local','Format','HHmmss')));
         % fprintf("Beginning frame <strong>%d</strong> out of <strong>%d</strong>\n",k,frame_num)
-        raw_frame = vid(:,:,k);
+        raw_frame = vidConst.Value(:,:,k);
         FBframes = [h_vars(5) h_vars(5)];
 
         if k - FBframes(1) < 1
@@ -48,7 +48,7 @@ function dataSetFilePath = segment_objects(vid,BW,h_vars,videoPath,saveTrashImag
             FBframes(1) = 2*h_vars(5) - FBframes(2);
         end
 
-        tempBW = BW(:,:,k - FBframes(1):k+FBframes(2));
+        tempBW = BWconst.Value(:,:,k - FBframes(1):k+FBframes(2));
         final_bboxes = segment_objects_core(tempBW,1 + FBframes(1),raw_frame,h_vars);
         final_bboxes(all(final_bboxes == 0,2),:) = [];
         objectArray = segmented_object_cleanup(final_bboxes,raw_frame);
