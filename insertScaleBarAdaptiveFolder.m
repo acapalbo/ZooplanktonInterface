@@ -1,5 +1,5 @@
 % NOTE: Less accurate than other version as it rounds to even 0.5
-function insertScaleBarAdaptive(imgDirectory, scaleFactor, conversionFactor,units)
+function insertScaleBarAdaptiveFolder(imgDirectory, scaleFactor, conversionFactor,units)
     folder = dir(imgDirectory);
     for k = 3:size(folder,1)
         fileName = folder(k).name;
