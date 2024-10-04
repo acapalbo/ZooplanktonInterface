@@ -1,10 +1,15 @@
 # ZooplanktonInterface
 
-## Graphical Interface for Zooplankton Segmentation and Classification algorithm. Most up to date release is v0.7.2-prerelease, it can be found in the releases/tags tab.
+## Graphical Interface for Zooplankton Segmentation and Classification algorithm. Most up to date release is v0.7.3-prerelease, it can be found in the releases/tags tab.
 
 
 ### Version Notes
 _____________
+#### v0.7.3-prerelease:
+* 2023a users should have no issues relating to start/end slider
+* Added iterative output folder as well as dialog box to choose output destination
+* Added 'validate' option in Segmentation tab to show images with segmented bounding boxes
+* Added edit fields for hyperparameters
 #### v0.7.2-prerelease:
 * Added 2 more models, GoogLeNet and DarkNet
 * Included iterative model saving to prevent overwriting models after multiple runs
