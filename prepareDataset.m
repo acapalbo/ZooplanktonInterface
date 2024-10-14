@@ -1,47 +1,48 @@
-function prepareDataset(srcFolder,uniformSize,classNames)
-srcFolder
-startingFolder = pwd;
+function prepareDataset(startingFolder,srcFolder,uniformSize,classNames)
+% classNames
+% srcFolder
+% startingFolder = pwd;
 Files=dir(srcFolder);
-mkdir PreparedDataset
+% mkdir PreparedDataset
 % uniformSize = [227,227];
 % for k=3:length(Files)
 %    FileNames=Files(k).name
 % end
 globalIter = 1;
 length(Files)
-if isfolder(Files(3).name)
+if isfolder(fullfile(srcFolder,Files(3).name))
 for k=3:length(Files)
     FolderName=Files(k).name;
-    mkdir(strcat("./PreparedDataset/",classNames(k-2)))
-    cd (strcat(srcFolder,"/",FolderName))
-    imgs = dir('*.*');
+    mkdir(fullfile(startingFolder,"PreparedDataset",classNames(k-2)))
+    % cd (strcat(srcFolder,"/",FolderName))
+    imgs = dir(fullfile(srcFolder,FolderName));
     for z=3:length(imgs)
-        img = imread(imgs(z).name);
+        img = imread(fullfile(srcFolder,FolderName,imgs(z).name));
         img = imresize(img,uniformSize,"bilinear");
         % delete(imgs(z).name)
-        imwrite(img,strcat(startingFolder,"/PreparedDataset/",classNames(k-2),"/", ...
-            num2str(globalIter,'%04.f'),".png"));
+        imwrite(img,fullfile(startingFolder,"PreparedDataset",classNames(k-2), ...
+            strcat(num2str(globalIter,'%04.f'),".png")));
         % movefile(imgs(z).name,strcat(num2str(globalIter,'%03.f'),".png"));
         globalIter = globalIter + 1;
     end    
-    cd(startingFolder)
+    % cd(startingFolder)
 
 end
 else
 
-    mkdir(strcat("./PreparedDataset/1"))
+    mkdir(fullfile("PreparedDataset","1"))
     cd (srcFolder)
     imgs = dir('*.*');
     for z=3:length(imgs)
         img = imread(imgs(z).name);
         img = imresize(img,uniformSize,"bilinear");
         % delete(imgs(z).name)
-        imwrite(img,strcat(startingFolder,"/PreparedDataset/1/", ...
-            num2str(globalIter,'%04.f'),".png"));
+        imwrite(img,fullfile(startingFolder,"PreparedDataset",num2str(1), ...
+            strcat(num2str(globalIter,'%04.f'),".png")));
         % movefile(imgs(z).name,strcat(num2str(globalIter,'%03.f'),".png"));
         globalIter = globalIter + 1;
     end    
-    cd(startingFolder)
+    % cd(startingFolder)
 
 
 end
