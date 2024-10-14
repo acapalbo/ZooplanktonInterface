@@ -1,10 +1,12 @@
 % takes video and method and produces final expanded binary version for
 % object detection
-function processed_vid = process_binary_videoSteps(vid,thresh,h_vars,step)
+function [processed_vid,freqMask] = process_binary_videoSteps_v2(vid,thresh,h_vars,step)
+    h_vars
     switch step
         case 'Binary'
             BW = binarize(vid,thresh);
-            masked = mask_recurring_pixels(BW, h_vars(1));
+            max(BW(:))
+            [masked,freqMask] = mask_recurring_pixels(BW, h_vars(1));
             clear BW
             filtered = remove_small_objects(masked, h_vars(2));
             clear masked
@@ -12,7 +14,7 @@ function processed_vid = process_binary_videoSteps(vid,thresh,h_vars,step)
             clear filtered
         case 'Mask'
             BW = vid;
-            masked = mask_recurring_pixels(BW, h_vars(1));
+            [masked,freqMask] = mask_recurring_pixels(BW, h_vars(1));
             clear BW
             filtered = remove_small_objects(masked, h_vars(2));
             clear masked
@@ -38,15 +40,15 @@ function binary = binarize(original, threshold)
     clear l w num_frames original threshold
 end
 
-function masked = mask_recurring_pixels(original, max_frequency)
+function [masked,freqMask] = mask_recurring_pixels(original, max_frequency)
     [l,w,num_frames] = size(original);
     masked = original;
 
     % find detection frequency for each pixel location
-    frequencies = mean(uint8(original), 3);
+    freqMask = mean(uint8(original), 3);
     clear original
     % mask all pixel locations w/ high detection frequencies
-    masked(repmat(frequencies >= max_frequency,[1,1,num_frames])) = 0;
+    masked(repmat(freqMask >= max_frequency,[1,1,num_frames])) = 0;
     masked = logical(masked);
     clear l w num_frames original max_frequency
 end
