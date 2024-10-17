@@ -6,13 +6,13 @@ function image_directory(video_array,video_title,img_format)
     
     %setting up directory title
     startingFolder = pwd;
-    filename = strcat(startingFolder,'\obj_imgs_',video_title);
+    filename = strcat(startingFolder,'\Frames_',video_title);
     
     mkdir (filename);
     cd (filename);
 
     for k=1:frames
-        img_file = strcat(video_title,'obj_',int2str(k),'_',img_format);
+        img_file = strcat(video_title,'Frames_',int2str(k),'_',img_format);
         imwrite(video_array(:,:,k),img_file);
     end
     cd (startingFolder);

@@ -10,18 +10,35 @@ function [finalImg,scaleImage] = dataSetPDF(folderPath)
     for i = 1:length(sortedFiles)
         dataLabels = cat(1,dataLabels,columnLetter(i));
     end
-    x = 0:0.001:0.25;
+    % x = 0:0.001:0.25;
+    maxGmag = 0;
     for i = 1:length(sortedFiles)
         % images(i).name
         tempimg = imread(fullfile(folderPath,sortedFiles(i)));
         % size(tempimg(:))
         [Gmag,~] = imgradient(tempimg);
-        pd = fitdist(Gmag(:)/max(Gmag(:)),'Kernel','Kernel',"epanechnikov");
+        if max(Gmag(:)) > maxGmag
+            maxGmag = max(Gmag(:));
+        end
+    
+    end
+    for i = 1:length(sortedFiles)
+        % images(i).name
+        tempimg = imread(fullfile(folderPath,sortedFiles(i)));
+        % size(tempimg(:))
+        [Gmag,~] = imgradient(tempimg);
+        pd = fitdist(Gmag(:),'Kernel','Kernel',"epanechnikov");
+        x = 0:1:max(Gmag(:));
+        if exist('xTot')
+            xTot = cat(1,xTot,{x});
+        else
+            xTot = {x};
+        end
         y = pdf(pd,x);
         if exist('yTot')
-            yTot = cat(1,yTot,y);
+            yTot = cat(1,yTot,{y});
         else
-            yTot = y;
+            yTot = {y};
         end
         % if max(Gmag(:)) > xMax
         %     xMax = ceil(max(Gmag(:)));
@@ -31,39 +48,50 @@ function [finalImg,scaleImage] = dataSetPDF(folderPath)
     cmap = colormap(hsv(size(yTot,1)));
     % cmap = cat(2,cmap,[1:1/length(yTot):1])
     opa = 0.45;
-    iter = 1:size(yTot,1)
+    iter = 1:size(yTot,1);
     for i = 1:size(yTot,1)
-        tempY = yTot(i,:);
-        exist('labelPoints')
+        tempY = cell2mat(yTot(i,:));
+        tempX = cell2mat(xTot(i,:));
         if exist('labelPoints')
-            labelPoints = cat(1,labelPoints,[x(tempY == max(tempY)),max(tempY)]);
+            labelPoints = cat(1,labelPoints,[tempX(tempY == max(tempY)),max(tempY)]);
 
         else
-            labelPoints = [x(tempY == max(tempY)),max(tempY)];
+            labelPoints = [tempX(tempY == max(tempY)),max(tempY)];
         end
     end
-    labelPoints
-    [~,sortOrder] = sort(labelPoints(:,2),"descend")
+ 
+    [~,sortOrder] = sort(labelPoints(:,2),"descend");
     for i = 1:size(yTot,1)
-    idx = sortOrder(i)
-        tempY = yTot(idx,:);
-    hold on
-    plot(x,tempY,"Color",cat(2,cmap(i,:),opa),"LineWidth",2)
+        idx = sortOrder(i);
+        tempY = cell2mat(yTot(idx,:));
+        tempX = cell2mat(xTot(idx,:));
+        % hold on
+        plot(tempX,tempY,"Color",cat(2,cmap(i,:),opa),"LineWidth",2)
+        [~,locs,w,~] = findpeaks(tempY,tempX,'Annotate','extents','MinPeakHeight',2);
+        pause
+        if size(w,2) > 1
+            w = max(w);
 
+        end
+        % [~,~,w,~] = findpeaks(tempY,x,'Annotate','extents')
+        % pause
+        if exist('totalW')
+            totalW = cat(1,totalW,w);
+        else
+            totalW = w;
+        end
     end
+
     hold on 
+    
     for i = 1:length(labelPoints)
-        x = [labelPoints(i,1),labelPoints(i,1)+0.2];
-        y = [labelPoints(i,2)/max(labelPoints(:,2)),labelPoints(i,2)/max(labelPoints(:,2))];
-        % annotation(fig,'textarrow',x,y,'String',dataLabels(i))
-        % insertShape("line")
-    text(labelPoints(i,1),labelPoints(i,2),dataLabels(i),"FontSize",15,"HorizontalAlignment","center","VerticalAlignment","baseline")
+        text(labelPoints(i,1),labelPoints(i,2),dataLabels(i),"FontSize",15,"HorizontalAlignment","center","VerticalAlignment","baseline")
     end
     lgd = legend(dataLabels(sortOrder));
     lgd.NumColumns = 6;
     [sortedPoints,pointOrder] = sort(labelPoints(:,2),"descend");
+    % [sortedPoints,pointOrder] = sort(totalW,"ascend");
     scaleImage = generateScaleImage(sortedPoints,pointOrder,sortedFiles,fullfile(folderPath,"insertedBars"),dataLabels);
-
 end
 
 function scaleImage = generateScaleImage(sortedPoints,pointOrder,sortedFiles,folderPath,dataLabels)
