@@ -7,6 +7,7 @@ function labeledImg = ImagePeakFinder(img)
         % [p,locs,peakWidth,~] = findpeaks(img(i,:))
 
         [p,locs,peakWidth,~] = findpeaks(img(i,:))
+        pause
         maxLoc = locs(p == max(p));
         for k = 1:size(p,2)
             for z = 1:size(p,2)

@@ -1,4 +1,4 @@
-function [finalImg,scaleImage] = dataSetPDF(folderPath)
+function [finalImg,scaleImage] = dataSetPDFCompare(folderPath)
     import matlab.io.spreadsheet.internal.columnLetter
     if exist(fullfile(folderPath,"insertedBars"))
         rmdir(fullfile(folderPath,"insertedBars"),"s")
@@ -12,31 +12,37 @@ function [finalImg,scaleImage] = dataSetPDF(folderPath)
     end
     % x = 0:0.001:0.25;
     maxGmag = 0;
-    % for i = 1:length(sortedFiles)
-    %     % images(i).name
-    %     tempimg = imread(fullfile(folderPath,sortedFiles(i)));
-    %     % size(tempimg(:))
-    %     [Gmag,~] = imgradient(tempimg);
-    %     if max(Gmag(:)) > maxGmag
-    %         maxGmag = max(Gmag(:));
-    %     end
-    % 
-    % end
     for i = 1:length(sortedFiles)
         % images(i).name
         tempimg = imread(fullfile(folderPath,sortedFiles(i)));
         % size(tempimg(:))
         [Gmag,~] = imgradient(tempimg);
+        if max(Gmag(:)) > maxGmag
+            maxGmag = max(Gmag(:));
+        end
+
+    end
+    for i = 1:length(sortedFiles)
+
+        tempimg = imread(fullfile(folderPath,sortedFiles(i)));
+
+        [Gmag,~] = imgradient(tempimg);
+
         % Gmag(Gmag == 0) = 0.001;
         % histogram(Gmag(:)/numel(Gmag(:)),200)
         % figure
         % histogram(Gmag(:),200)
         % pause
         % close gcf
-        pd = fitdist(Gmag(:)/max(Gmag(:)),'Kernel','Kernel',"epanechnikov");
-        % pd = fitdist(Gmag(:),'Kernel','Kernel',"epanechnikov");
-        % x = 0:0.1:max(Gmag(:));
-        x = 0:0.01:1;
+
+        pd = fitdist((Gmag(:)/max(Gmag(:))),'Kernel','Kernel',"epanechnikov");
+        x = 0:0.001:1;
+
+        % pd = fitdist((Gmag(:)/max(Gmag(:)))*100,'Kernel','Kernel',"epanechnikov");
+        % x = 0:0.01:100;
+        % 
+        % 
+
         if exist('xTot')
             xTot = cat(1,xTot,{x});
         else
@@ -48,10 +54,12 @@ function [finalImg,scaleImage] = dataSetPDF(folderPath)
         else
             yTot = {y};
         end
-        % pd = fitdist(Gmag(:)/max(Gmag(:)),'Kernel','Kernel',"epanechnikov");
+
+        % x2 y2 
+
         pd = fitdist(Gmag(:),'Kernel','Kernel',"epanechnikov");
-        x = 0:0.01:max(Gmag(:));
-        % x = 0:0.01:1;
+        x = 0:0.1:max(Gmag(:));
+
         if exist('xTot2')
             xTot2 = cat(1,xTot2,{x});
         else
@@ -72,6 +80,7 @@ function [finalImg,scaleImage] = dataSetPDF(folderPath)
     % cmap = cat(2,cmap,[1:1/length(yTot):1])
     opa = 0.45;
     iter = 1:size(yTot,1);
+    
     for i = 1:size(yTot,1)
         tempY = cell2mat(yTot(i,:));
         tempX = cell2mat(xTot(i,:));
@@ -94,12 +103,12 @@ function [finalImg,scaleImage] = dataSetPDF(folderPath)
 
         
         % trapz(tempX2,tempY2)
-        area = trapz(tempX,tempY)
-        fprintf("Area 1: %d; Area 2: %d\n",trapz(tempX,tempY),trapz(tempX2,tempY2))
+        area = trapz(tempX,tempY);
+        fprintf("Area 1: %0.3d; Area 2: %0.4d\n",trapz(tempX,tempY),trapz(tempX2,tempY2))
         % hold on
         tiledlayout(1,2)
         nexttile
-        plot(tempX,tempY/area,"Color",cat(2,cmap(i,:),opa),"LineWidth",2);
+        plot(tempX,tempY,"Color",cat(2,cmap(i,:),opa),"LineWidth",2);
         % max(tempY(:))
         [~,locs,w,~] = findpeaks(tempY,tempX,'Annotate','extents','MinPeakHeight',2);
         nexttile
@@ -124,8 +133,8 @@ function [finalImg,scaleImage] = dataSetPDF(folderPath)
     for i = 1:length(labelPoints)
         text(labelPoints(i,1),labelPoints(i,2),dataLabels(i),"FontSize",15,"HorizontalAlignment","center","VerticalAlignment","baseline")
     end
-    lgd = legend(dataLabels(sortOrder));
-    lgd.NumColumns = 6;
+    % lgd = legend(dataLabels(sortOrder));
+    % lgd.NumColumns = 6;
     [sortedPoints,pointOrder] = sort(labelPoints(:,2),"descend");
     % [sortedPoints,pointOrder] = sort(totalW,"ascend");
     scaleImage = generateScaleImage(sortedPoints,pointOrder,sortedFiles,fullfile(folderPath,"insertedBars"),dataLabels);
