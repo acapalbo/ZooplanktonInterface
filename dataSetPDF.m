@@ -36,7 +36,7 @@ function [finalImg,scaleImage] = dataSetPDF(folderPath)
         pd = fitdist(Gmag(:)/max(Gmag(:)),'Kernel','Kernel',"epanechnikov");
         % pd = fitdist(Gmag(:),'Kernel','Kernel',"epanechnikov");
         % x = 0:0.1:max(Gmag(:));
-        x = 0:0.01:1;
+        x = 0:0.001:1;
         if exist('xTot')
             xTot = cat(1,xTot,{x});
         else
@@ -82,7 +82,7 @@ function [finalImg,scaleImage] = dataSetPDF(folderPath)
             labelPoints = [tempX(tempY == max(tempY)),max(tempY)];
         end
     end
- 
+         % tiledlayout(1,2)
     [~,sortOrder] = sort(labelPoints(:,2),"descend");
     for i = 1:size(yTot,1)
         idx = sortOrder(i);
@@ -94,18 +94,18 @@ function [finalImg,scaleImage] = dataSetPDF(folderPath)
 
         
         % trapz(tempX2,tempY2)
-        area = trapz(tempX,tempY)
+        area = trapz(tempX,tempY);
         fprintf("Area 1: %d; Area 2: %d\n",trapz(tempX,tempY),trapz(tempX2,tempY2))
-        % hold on
-        tiledlayout(1,2)
-        nexttile
+        hold on
+
+        % nexttile
         plot(tempX,tempY/area,"Color",cat(2,cmap(i,:),opa),"LineWidth",2);
         % max(tempY(:))
         [~,locs,w,~] = findpeaks(tempY,tempX,'Annotate','extents','MinPeakHeight',2);
-        nexttile
-        plot(tempX2,tempY2,"Color",cat(2,cmap(i,:),opa),"LineWidth",2)
-        pause
-        close gcf
+        % nexttile
+        % plot(tempX2,tempY2,"Color",cat(2,cmap(i,:),opa),"LineWidth",2)
+        % pause
+        % close gcf
         if size(w,2) > 1
             w = max(w);
 

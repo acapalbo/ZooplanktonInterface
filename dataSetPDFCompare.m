@@ -104,28 +104,28 @@ function [finalImg,scaleImage] = dataSetPDFCompare(folderPath)
         
         % trapz(tempX2,tempY2)
         area = trapz(tempX,tempY);
-        fprintf("Area 1: %0.3d; Area 2: %0.4d\n",trapz(tempX,tempY),trapz(tempX2,tempY2))
-        % hold on
+        fprintf("Area 1: %0.3f; Area 2: %0.4f\n",trapz(tempX,tempY),trapz(tempX2,tempY2))
+        hold on
         tiledlayout(1,2)
         nexttile
-        plot(tempX,tempY,"Color",cat(2,cmap(i,:),opa),"LineWidth",2);
+        plot(tempX,tempY,"Color",cmap(i,:),"LineWidth",2);
         % max(tempY(:))
-        [~,locs,w,~] = findpeaks(tempY,tempX,'Annotate','extents','MinPeakHeight',2);
+        % [~,locs,w,~] = findpeaks(tempY,tempX,'Annotate','extents','MinPeakHeight',2);
         nexttile
-        plot(tempX2,tempY2,"Color",cat(2,cmap(i,:),opa),"LineWidth",2)
-        pause
-        close gcf
-        if size(w,2) > 1
-            w = max(w);
-
-        end
-        % [~,~,w,~] = findpeaks(tempY,x,'Annotate','extents')
+        plot(tempX2,tempY2,"Color",cmap(i,:),"LineWidth",2)
         % pause
-        if exist('totalW')
-            totalW = cat(1,totalW,w);
-        else
-            totalW = w;
-        end
+        % close gcf
+        % if size(w,2) > 1
+        %     w = max(w);
+        % 
+        % end
+        % % [~,~,w,~] = findpeaks(tempY,x,'Annotate','extents')
+        % % pause
+        % if exist('totalW')
+        %     totalW = cat(1,totalW,w);
+        % else
+        %     totalW = w;
+        % end
     end
 
     hold on 

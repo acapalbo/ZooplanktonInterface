@@ -1,20 +1,23 @@
 % takes video and method and produces final expanded binary version for
 % object detection
-function [processed_vid,freqMask] = process_binary_videoSteps_v2(vid,thresh,h_vars,step)
+function [processed_vid,step_vid] = process_binary_videoSteps_v2(vid,thresh,h_vars,step)
     h_vars
     switch step
         case 'Binary'
             BW = binarize(vid,thresh);
             max(BW(:))
-            [masked,freqMask] = mask_recurring_pixels(BW, h_vars(1));
+            [masked,~] = mask_recurring_pixels(BW, h_vars(1));
             clear BW
+            max(masked(:))
             filtered = remove_small_objects(masked, h_vars(2));
             clear masked
+            max(filtered(:))
             processed_vid = imdilate(filtered,strel("disk",h_vars(3)));
             clear filtered
+            max(processed_vid(:))
         case 'Mask'
             BW = vid;
-            [masked,freqMask] = mask_recurring_pixels(BW, h_vars(1));
+            [masked,step_vid] = mask_recurring_pixels(BW, h_vars(1));
             clear BW
             filtered = remove_small_objects(masked, h_vars(2));
             clear masked
