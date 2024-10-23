@@ -113,8 +113,8 @@ function [finalImg,scaleImage] = dataSetPDFCompare(folderPath)
         % [~,locs,w,~] = findpeaks(tempY,tempX,'Annotate','extents','MinPeakHeight',2);
         nexttile
         plot(tempX2,tempY2,"Color",cmap(i,:),"LineWidth",2)
-        % pause
-        % close gcf
+        pause
+        close gcf
         % if size(w,2) > 1
         %     w = max(w);
         % 
