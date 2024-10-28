@@ -28,7 +28,9 @@ function BWfinal = mask_object_super_pixel(img)
         end
         L = labelmatrix(CC);
         mask = uint8(BW).*uint8((L == closest_idx));
-        expanded_bw = domain_expansion(mask, 2);
+        seD = strel("disk",2);
+        expanded_bw = imdilate(mask,seD);
+        % expanded_bw = domain_expansion(mask, 2);
         BWfinal = imerode(expanded_bw,seD);
 end
 
