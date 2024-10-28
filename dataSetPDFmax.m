@@ -33,7 +33,7 @@ function [finalImg,scaleImage] = dataSetPDF(folderPath)
         % histogram(Gmag(:),200)
         % pause
         % close gcf
-        pd = fitdist(Gmag(:)/maxGmag,'Kernel','Kernel',"epanechnikov");
+        pd = fitdist(Gmag(:)/max(Gmag(:)),'Kernel','Kernel',"epanechnikov");
         % pd = fitdist(Gmag(:),'Kernel','Kernel',"epanechnikov");
         % x = 0:0.1:max(Gmag(:));
         x = 0:0.001:1;
@@ -49,20 +49,6 @@ function [finalImg,scaleImage] = dataSetPDF(folderPath)
             yTot = {y};
         end
         % pd = fitdist(Gmag(:)/max(Gmag(:)),'Kernel','Kernel',"epanechnikov");
-        pd = fitdist(Gmag(:),'Kernel','Kernel',"epanechnikov");
-        x = 0:0.01:max(Gmag(:));
-        % x = 0:0.01:1;
-        if exist('xTot2')
-            xTot2 = cat(1,xTot2,{x});
-        else
-            xTot2 = {x};
-        end
-        y = pdf(pd,x);
-        if exist('yTot2')
-            yTot2 = cat(1,yTot2,{y});
-        else
-            yTot2 = {y};
-        end
         % if max(Gmag(:)) > xMax
         %     xMax = ceil(max(Gmag(:)));
         % end
@@ -89,34 +75,11 @@ function [finalImg,scaleImage] = dataSetPDF(folderPath)
         tempY = cell2mat(yTot(idx,:));
         tempX = cell2mat(xTot(idx,:));
 
-        tempY2 = cell2mat(yTot2(idx,:));
-        tempX2 = cell2mat(xTot2(idx,:));
 
-        
-        % trapz(tempX2,tempY2)
-        area = trapz(tempX,tempY);
-        fprintf("Area 1: %d; Area 2: %d\n",trapz(tempX,tempY),trapz(tempX2,tempY2))
         hold on
 
         % nexttile
-        plot(tempX,tempY/area,"Color",cat(2,cmap(i,:),opa),"LineWidth",2);
-        % max(tempY(:))
-        [~,locs,w,~] = findpeaks(tempY,tempX,'Annotate','extents','MinPeakHeight',2);
-        % nexttile
-        % plot(tempX2,tempY2,"Color",cat(2,cmap(i,:),opa),"LineWidth",2)
-        % pause
-        % close gcf
-        if size(w,2) > 1
-            w = max(w);
-
-        end
-        % [~,~,w,~] = findpeaks(tempY,x,'Annotate','extents')
-        % pause
-        if exist('totalW')
-            totalW = cat(1,totalW,w);
-        else
-            totalW = w;
-        end
+        plot(tempX,tempY,"Color",cat(2,cmap(i,:),opa),"LineWidth",2);
     end
 
     hold on 
