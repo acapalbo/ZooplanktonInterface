@@ -21,10 +21,7 @@ function flatfielded_video = precise_flatfield(original, calibration_frame, brig
     flatfielded_video = zeros(length, width, num_frames, 'uint8');
     for k = 1:num_frames
         calibration_shift = imregister(calibration_frame, original(:, :, k), "translation", optimizer, metric);
-        for i = 1:length
-            for j = 1:width
-                flatfielded_video(i, j, k) = uint8((uint16(original(i, j, k)) * uint16(average_values(1, 1, k) * brightness)) / uint16(calibration_shift(i, j)));
-            end
-        end
+
+        flatfielded_video(:, :, k) = uint8((uint16(original(:, :, k)) .* uint16(average_values(1, 1, k) * brightness)) ./ uint16(calibration_shift(:, :)));
     end
 end
