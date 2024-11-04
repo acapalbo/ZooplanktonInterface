@@ -10,5 +10,5 @@ function calibration_frame = calibrateV2(original)
     % return frame w/ avg. of top 80% of values
     calibration_frame = mean(sorted_video(:,:, uint16(0.2*num_frames):end),3);
     tEnd = toc(tStart);
-    fprintf("<strong>Elapsed Time %f s</strong>\n",tEnd)
+    fprintf("<strong>Calibration Time: %.3f s</strong>\n",tEnd)
 end

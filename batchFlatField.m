@@ -20,6 +20,6 @@ function batchFlatField()
         end
     end
     tEnd = toc(tStart);
-    fprintf("Total time: %2.3f seconds",tEnd)
+    fprintf("Total time: %.3f seconds\n",tEnd)
 
 end
