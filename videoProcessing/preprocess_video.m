@@ -1,6 +1,7 @@
 % reads an RGB .avi file and saves preprocessed version
 function final = preprocess_video(vid, calibration, brightness, flatfielding_method)
     % uses specified flatfielding function
+    tStart = tic;
     if (flatfielding_method == "precise")
         % takes ~60 min. total for a 30-second video
         final = precise_flatfield(vid, calibration, brightness);
@@ -11,5 +12,6 @@ function final = preprocess_video(vid, calibration, brightness, flatfielding_met
         % takes ~8 min. total for a 30-second video
         final = flatfield(vid, calibration, brightness);
     end
+    tEnd = toc;
     fprintf("<strong>Processing Time: %.3f s</strong>\n",tEnd)
 end
