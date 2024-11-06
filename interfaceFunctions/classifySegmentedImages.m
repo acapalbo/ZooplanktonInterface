@@ -1,4 +1,4 @@
-function scores = classifySegmentedImages(trainedNet,imds,confidenceThreshold,appAxis,dirLocation)
+function scores = classifySegmentedImages(trainedNet,imds,confidenceThreshold,plotHist,appAxis,dirLocation)
     if isMATLABReleaseOlderThan("R2024a")
         X = readall(imds);
         [l,w] = size(imds.preview);
@@ -65,10 +65,12 @@ function scores = classifySegmentedImages(trainedNet,imds,confidenceThreshold,ap
             end
         end
     end
+    if plotHist
     b = bar(appAxis,1:size(classCounts,2),classCounts);
     xtips2 = b.XEndPoints;
     ytips2 = b.YEndPoints;
     labels2 = string(b.YData);
     text(appAxis,xtips2,ytips2,labels2,'HorizontalAlignment','center',...
         'VerticalAlignment','bottom')
+    end
 end
