@@ -1,4 +1,4 @@
-function prepareDataset(startingFolder,srcFolder,uniformSize,classNames)
+function imgKey = prepareDataset(startingFolder,srcFolder,uniformSize,classNames)
 % classNames
 % srcFolder
 % startingFolder = pwd;
@@ -24,6 +24,11 @@ for k=3:length(Files)
             strcat(num2str(globalIter,'%04.f'),".png")));
         % movefile(imgs(z).name,strcat(num2str(globalIter,'%03.f'),".png"));
         globalIter = globalIter + 1;
+        if exist("imgKey")
+            imgKey = cat(1,imgKey,[imgs(z).name,strcat(num2str(globalIter-1,'%04.f'),".png")]);
+        else
+            imgKey = [imgs(z).name,strcat(num2str(globalIter-1,'%04.f'),".png")];
+        end
     end    
     % cd(startingFolder)
 
@@ -41,6 +46,11 @@ else
             strcat(num2str(globalIter,'%04.f'),".png")));
         % movefile(imgs(z).name,strcat(num2str(globalIter,'%03.f'),".png"));
         globalIter = globalIter + 1;
+        if exist("imgKey")
+            imgKey = cat(1,imgKey,[imgs(z).name,strcat(num2str(globalIter-1,'%04.f'),".png")]);
+        else
+            imgKey = [imgs(z).name,strcat(num2str(globalIter-1,'%04.f'),".png")];
+        end
     end    
     % cd(startingFolder)
 

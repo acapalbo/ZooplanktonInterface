@@ -56,11 +56,11 @@ function scores = classifySegmentedImages(trainedNet,imds,confidenceThreshold,pl
             if a(i) > confidenceThreshold
                 % save image to directory
                 classCounts(b(i)) = classCounts(b(i)) + 1;
-                copyfile(cell2mat(imds.Files(i)),strcat(dirLocation,'/ClassificationOutput/',string(b(i))))
+                copyfile(cell2mat(imds.Files(i)),strcat(dirLocation,'/ClassificationOutput/',string(b(i))));
             else
                 class = size(classCounts,2);
                 classCounts(class) = classCounts(class) + 1;
-                copyfile(cell2mat(imds.Files(i)),strcat(dirLocation,'/ClassificationOutput/',num2str(class)))
+                copyfile(cell2mat(imds.Files(i)),strcat(dirLocation,'/ClassificationOutput/',num2str(class)));
                 % move to low confidence folder
             end
         end
