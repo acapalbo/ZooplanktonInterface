@@ -9,7 +9,6 @@ Files=dir(srcFolder);
 %    FileNames=Files(k).name
 % end
 globalIter = 1;
-length(Files)
 if isfolder(fullfile(srcFolder,Files(3).name))
 for k=3:length(Files)
     FolderName=Files(k).name;
