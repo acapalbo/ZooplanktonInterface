@@ -1,0 +1,108 @@
+<deployment-project plugin="plugin.apptool" plugin-version="1.0">
+  <configuration build-checksum="3776718899" file="C:\Users\acapa\ZooplanktonInterface\interfaceFunctions\Zooplankton App.prj" location="C:\Users\acapa\ZooplanktonInterface\interfaceFunctions" name="Zooplankton App" target="target.mlapps" target-name="Package App">
+    <param.appname>Zooplankton App</param.appname>
+    <param.authnamewatermark>Andrew Capalbo</param.authnamewatermark>
+    <param.email />
+    <param.company />
+    <param.icon />
+    <param.icons />
+    <param.summary />
+    <param.description>v0.8.0 edits:
+-Gradual introduction of batch mode
+-Lot of backend optimizations
+-More networks</param.description>
+    <param.screenshot>C:\Users\acapa\AppData\Local\Temp\tp8d713a7f_eaca_402b_9979_27ddd296cd2c.png</param.screenshot>
+    <param.version>0.8</param.version>
+    <param.products.name />
+    <param.products.id />
+    <param.products.version />
+    <param.platforms />
+    <param.output>${PROJECT_ROOT}</param.output>
+    <param.guid>28c01a5a-865b-416c-85bc-814c98265c4c</param.guid>
+    <unset>
+      <param.email />
+      <param.company />
+      <param.icon />
+      <param.icons />
+      <param.summary />
+      <param.products.name />
+      <param.products.id />
+      <param.products.version />
+      <param.platforms />
+      <param.output />
+    </unset>
+    <fileset.main>
+      <file>${PROJECT_ROOT}\SegmentationAppV3.mlapp</file>
+    </fileset.main>
+    <fileset.depfun>
+      <file>C:\Users\acapa\ZooplanktonInterface\crop_bounding_initial.m</file>
+      <file>C:\Users\acapa\ZooplanktonInterface\dynamic_flatfield.m</file>
+      <file>C:\Users\acapa\ZooplanktonInterface\flatfield.m</file>
+      <file>C:\Users\acapa\ZooplanktonInterface\insert_boxesv3.m</file>
+      <file>C:\Users\acapa\ZooplanktonInterface\mask_object_super_pixel.m</file>
+      <file>C:\Users\acapa\ZooplanktonInterface\movementCheckRegion3.m</file>
+      <file>C:\Users\acapa\ZooplanktonInterface\object_metrics.m</file>
+      <file>C:\Users\acapa\ZooplanktonInterface\precise_flatfield.m</file>
+      <file>C:\Users\acapa\ZooplanktonInterface\prepareDataset.m</file>
+      <file>C:\Users\acapa\ZooplanktonInterface\process_binary_videoSteps_v2.m</file>
+      <file>C:\Users\acapa\ZooplanktonInterface\process_binary_videoV2.m</file>
+      <file>C:\Users\acapa\ZooplanktonInterface\processVideo.m</file>
+      <file>C:\Users\acapa\ZooplanktonInterface\read_avi.m</file>
+      <file>C:\Users\acapa\ZooplanktonInterface\saveImagesLineage.m</file>
+      <file>C:\Users\acapa\ZooplanktonInterface\segment_objects.m</file>
+      <file>C:\Users\acapa\ZooplanktonInterface\segment_objects_core.m</file>
+      <file>C:\Users\acapa\ZooplanktonInterface\segment_objects_parallel.m</file>
+      <file>C:\Users\acapa\ZooplanktonInterface\segmented_object_cleanup.m</file>
+      <file>C:\Users\acapa\ZooplanktonInterface\setupNetworkAdaptedDenseNet.m</file>
+    </fileset.depfun>
+    <fileset.resources>
+      <file>C:\Users\acapa\ZooplanktonInterface\assets</file>
+      <file>${PROJECT_ROOT}</file>
+      <file>C:\Users\acapa\ZooplanktonInterface\networkFunctions</file>
+      <file>C:\Users\acapa\ZooplanktonInterface\videoProcessing</file>
+    </fileset.resources>
+    <fileset.package />
+    <build-deliverables>
+      <file location="C:\Users\acapa\ZooplanktonInterface" name="interfaceFunctions" optional="false">C:\Users\acapa\ZooplanktonInterface\interfaceFunctions</file>
+    </build-deliverables>
+    <workflow />
+    <matlab>
+      <root>C:\Program Files\MATLAB\R2024a</root>
+      <toolboxes>
+        <toolbox name="matlabcoder" />
+        <toolbox name="gpucoder" />
+        <toolbox name="neuralnetwork" />
+      </toolboxes>
+      <toolbox>
+        <matlabcoder>
+          <enabled>true</enabled>
+        </matlabcoder>
+      </toolbox>
+      <toolbox>
+        <gpucoder>
+          <enabled>true</enabled>
+        </gpucoder>
+      </toolbox>
+      <toolbox>
+        <neuralnetwork>
+          <enabled>true</enabled>
+        </neuralnetwork>
+      </toolbox>
+    </matlab>
+    <platform>
+      <unix>false</unix>
+      <mac>false</mac>
+      <windows>true</windows>
+      <win2k>false</win2k>
+      <winxp>false</winxp>
+      <vista>false</vista>
+      <linux>false</linux>
+      <solaris>false</solaris>
+      <osver>10.0</osver>
+      <os32>false</os32>
+      <os64>true</os64>
+      <arch>win64</arch>
+      <matlab>true</matlab>
+    </platform>
+  </configuration>
+</deployment-project>
