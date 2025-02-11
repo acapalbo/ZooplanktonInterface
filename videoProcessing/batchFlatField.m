@@ -7,7 +7,7 @@ function batchFlatField(appProgress,filePath,outputDir,FFmethod)
     tStart = tic;
     fprintf("Reading from <strong>%s</strong>.\n",filePath);
     for z = 3:length(videoFiles)
-        appProgress.Text = strcat(string(round((z-3)/(length(videoFiles)-3),1)),"%");
+        appProgress.Text = strcat(string(round((z-3)/(length(videoFiles)-3)*100,2)),"%");
         try
             tempVid = read_avi(fullfile(filePath,videoFiles(z).name));
         catch
@@ -17,18 +17,16 @@ function batchFlatField(appProgress,filePath,outputDir,FFmethod)
         try
             calFrame = calibrateV2(tempVid);
             ffVid = preprocess_video(tempVid,calFrame,1,FFmethod);
-        catch ME
+        catch 
             fprintf("<strong>%s</strong> failed to process.\n",videoFiles(z).name);
-            rethrow(ME)
             continue
         end
         try
             fileName = videoFiles(z).name;
             fileName = strcat(fileName(1:end-4),"precise_ff.avi");
             write_avi(ffVid,fullfile(outputDir,fileName))
-        catch ME
+        catch
             fprintf("<strong>%s</strong> failed to write.\n",videoFiles(z).name);
-            rethrow(ME)
             continue
         end
 
