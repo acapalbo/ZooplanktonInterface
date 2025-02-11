@@ -1,8 +1,9 @@
-function batchClassify(datasetsFolder,netTable,performBinning,seperateTrash,imgSize,confidenceThreshold,outputDir)
+function batchClassify(appProgress,datasetsFolder,netTable,performBinning,seperateTrash,imgSize,confidenceThreshold,outputDir)
     logitLayer = "batchnorm";
     classNames = string(1:4);
     mkdir(outputDir)
     for z = 1:length(datasetsFolder)
+        appProgress.Text = strcat(string(round((z)/(length(videoFiles))*100,2)),"%");
         dataSetName = strsplit(datasetsFolder(z),"\");
         dataSetName = dataSetName(end);
         if seperateTrash && performBinning

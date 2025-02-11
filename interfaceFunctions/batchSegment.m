@@ -1,4 +1,4 @@
-function allDatasetPaths = batchSegment(videoFolder,h_vars,BWthresh,saveTrashImages,minLength,minWidth,batchOutputDir,runParallel,parallelMethod)
+function allDatasetPaths = batchSegment(appProgress,videoFolder,h_vars,BWthresh,saveTrashImages,minLength,minWidth,batchOutputDir,runParallel,parallelMethod)
     videoFiles = dir(videoFolder);
     
     if runParallel
@@ -6,6 +6,7 @@ function allDatasetPaths = batchSegment(videoFolder,h_vars,BWthresh,saveTrashIma
         parallelPool = parpool(parallelMethod,maxNumCompThreads);
     end
     for z = 3:length(videoFiles)
+        appProgress.Text = strcat(string(round((z-3)/(length(videoFiles)-3)*100,2)),"%");
         vid = read_avi(fullfile(videoFolder,videoFiles(z).name));
         fileName = char(videoFiles(z).name);
         fileName = fileName(1:end-4);
