@@ -6,5 +6,5 @@ function write_avi(frames,filename)
     writeVideo(v, frames)
     close(v)
     tEnd = toc(tStart);
-    fprintf("<strong>Write Time: %.3f seconds\n</strong>",tEnd);
+    fprintf("<strong>Write Time: %.3f s\n</strong>",tEnd);
 end

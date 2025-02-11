@@ -10,7 +10,7 @@ function final = preprocess_video(vid, calibration, brightness, flatfielding_met
         final = dynamic_flatfield(vid, calibration, brightness);
     else
         % takes ~8 min. total for a 30-second video
-        final = flatfield(vid, calibration, brightness);
+        final = standardFlatfield_v2(vid, brightness);
     end
     tEnd = toc(tStart);
     fprintf("<strong>Processing Time: %.3f s</strong>\n",tEnd)
