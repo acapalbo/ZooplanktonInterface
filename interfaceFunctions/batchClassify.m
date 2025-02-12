@@ -2,35 +2,32 @@ function batchClassify(appProgress,datasetsFolder,netTable,performBinning,sepera
     logitLayer = "batchnorm";
     classNames = string(1:4);
     mkdir(outputDir)
-    for z = 1:length(datasetsFolder)
-        appProgress.Text = strcat(string(round((z)/(length(videoFiles))*100,2)),"%");
-        dataSetName = strsplit(datasetsFolder(z),"\");
-        dataSetName = dataSetName(end);
+    datasetFiles = dir(datasetsFolder);
+    for z = 3:length(datasetFiles)
+        tempFiles = dir(fullfile(datasetsFolder,datasetFiles(z).name))
+        datasetPath = fullfile(datasetsFolder,datasetFiles(z).name,tempFiles(3).name)
+        appProgress.Text = strcat(string(round((z-3)/(length(datasetFiles)-3)*100,2)),"%");
+        dataSetName = tempFiles(3).name
         if seperateTrash && performBinning
             binBoundaries = netTable.boundaries;
             theta = netTable.theta;
             trainedSeperator = netTable.trainedSeperator;
-            tempUnseperated = datasetsFolder(z);
-            dataSetName = strsplit(datasetsFolder(z),"\");
-            dataSetName = dataSetName(end);
-            correctImgKey = SVMseperateTrash(tempUnseperated,dataSetName,netTable.trainedNet,logitLayer,trainedSeperator,imgSize,outputDir);
+            correctImgKey = SVMseperateTrash(datasetPath,dataSetName,netTable.trainedNet,logitLayer,trainedSeperator,imgSize,outputDir);
             
             [~,~,~] = classifySegmentedImagesIsotonic(netTable.trainedNet,strcat(outputDir,"\SVMClassifiedRawImages_",dataSetName,"\2"),strcat(outputDir,"\SVMPredictions_",dataSetName,"\2"),confidenceThreshold,outputDir,theta,binBoundaries,dataSetName,correctImgKey);
         elseif seperateTrash && ~performBinning
             trainedSeperator = netTable.trainedSeperator;
-            tempUnseperated = datasetsFolder(z);
-            dataSetName = strsplit(datasetsFolder(z),"\");
-            dataSetName = dataSetName(end);
-            correctImgKey = SVMseperateTrash(tempUnseperated,dataSetName,netTable.trainedNet,logitLayer,trainedSeperator,imgSize,outputDir);
+
+            correctImgKey = SVMseperateTrash(datasetPath,dataSetName,netTable.trainedNet,logitLayer,trainedSeperator,imgSize,outputDir);
             classifySegmentedImages(netTable.trainedNet,strcat(outputDir,"\SVMClassifiedRawImages_",dataSetName,"\2"),strcat(outputDir,"\SVMPredictions_",dataSetName,"\2"),confidenceThreshold,outputDir,dataSetName,correctImgKey)
         elseif ~seperateTrash && performBinning
             binBoundaries = netTable.boundaries;
             theta = netTable.theta;
-            [tempImgKey,tempUniform] = prepareDatasetSingleClass(outputDir,datasetsFolder(z),imgSize,dataSetName);
-            [~,~,~] = classifySegmentedImagesIsotonic(netTable.trainedNet,datasetsFolder(z),tempUniform,confidenceThreshold,outputDir,theta,binBoundaries,dataSetName,tempImgKey);
+            [tempImgKey,tempUniform] = prepareDatasetSingleClass(outputDir,datasetPath,imgSize,dataSetName);
+            [~,~,~] = classifySegmentedImagesIsotonic(netTable.trainedNet,datasetPath,tempUniform,confidenceThreshold,outputDir,theta,binBoundaries,dataSetName,tempImgKey);
         elseif ~seperateTrash && ~performBinning
-            [tempImgKey,tempUniform] = prepareDatasetSingleClass(outputDir,datasetsFolder(z),imgSize,dataSetName);
-            classifySegmentedImages(netTable.trainedNet,datasetsFolder(z),tempUniform,confidenceThreshold,outputDir,dataSetName,tempImgKey);
+            [tempImgKey,tempUniform] = prepareDatasetSingleClass(outputDir,datasetPath,imgSize,dataSetName);
+            classifySegmentedImages(netTable.trainedNet,datasetPath,tempUniform,confidenceThreshold,outputDir,dataSetName,tempImgKey);
         end
 
     end

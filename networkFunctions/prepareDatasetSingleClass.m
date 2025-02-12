@@ -2,7 +2,7 @@ function [imgKey,dataSetPath] = prepareDatasetSingleClass(startingFolder,srcFold
 % classNames
 % srcFolder
 % startingFolder = pwd;
-mkdir(strcat("PreparedDataset",dataSetTitle));
+mkdir(strcat(startingFolder,"\PreparedDataset",dataSetTitle));
 dataSetPath = strcat(startingFolder,"\PreparedDataset",dataSetTitle);
 % uniformSize = [227,227];
 % for k=3:length(Files)
@@ -15,6 +15,7 @@ globalIter = 1;
     for z=3:length(imgs)
         img = imread(fullfile(srcFolder,imgs(z).name));
         [l,w] = size(img);
+        
         img = imresize(img,uniformSize,"bilinear");
         % delete(imgs(z).name)
         imwrite(img,fullfile(startingFolder,strcat("PreparedDataset",dataSetTitle,"\DataSet"),num2str(1), ...
