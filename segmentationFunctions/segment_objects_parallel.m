@@ -28,7 +28,6 @@ function dataSetFilePath = segment_objects_parallel(vid,BW,h_vars,videoPath,save
     % mkdir(strcat("ZooPlanktonOutput_",string(datetime("today","Format","MM_dd_yy"))));
     vidFileName = char(vidFileName(end));
     vidFileName = string(vidFileName(1:end-4));
-    disp(strcat(outputDir,"\TableInfo_",vidFileName))
     mkdir(strcat(outputDir,"\TableInfo_",vidFileName));
     mkdir(strcat(outputDir,"\NonRelevantObjects_",vidFileName));
     mkdir(strcat(outputDir,"\DataSet_",vidFileName));
@@ -53,13 +52,16 @@ function dataSetFilePath = segment_objects_parallel(vid,BW,h_vars,videoPath,save
         final_bboxes = segment_objects_core(tempBW,1 + FBframes(1),raw_frame,h_vars);
         final_bboxes(all(final_bboxes == 0,2),:) = [];
         objectArray = segmented_object_cleanup(final_bboxes,raw_frame);
+        if size(objectArray,3) > 1
         % fprintf("%d objects saved to 'Valid'\n", size(objectArray,3));
         
         [identifiers,relVsNonRel] = saveImagesLineage(objectArray,k,final_bboxes,videoPath,saveTrashImages, minLength,minWidth,outputDir);
+
         infoTable = table(repmat(videoPath,size(final_bboxes,1),1),final_bboxes(:,1),final_bboxes(:,2),final_bboxes(:,3),final_bboxes(:,4),(1:size(final_bboxes,1))',identifiers,repmat(-1,size(final_bboxes,1),1),relVsNonRel);
         infoTable.Properties.VariableNames = {'VideoPath','BoundingX','BoundingY','BoundingWidth','BoundingHeight','Object#','FileName','ClassName','RelevantVSNonRelevant'};
         writetable(infoTable,strcat(outputDir,"\TableInfo_",vidFileName,"\Frame_",num2str(k),".csv"));
         writematrix(strcat(startT," ",num2str(k,'%04.f'),string(datetime('now','TimeZone','local','Format','HHmmss'))),fullfile(outputDir,"timeOutput.txt"),'WriteMode','append')
+        end
     end
     tEnd = toc(tStart);
     fprintf("<strong>Total Segmentation Time: %f s</strong>\n",tEnd)

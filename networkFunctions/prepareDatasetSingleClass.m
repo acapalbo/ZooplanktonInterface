@@ -33,7 +33,7 @@ globalIter = 1;
     imgSizes = imgKey(:,3:end);
     imgSizes = cat(2,imgSizes,(1:length(imgSizes))');
     writematrix(imgSizes,fullfile(startingFolder,strcat("PreparedDataset",dataSetTitle,"/imgSizes.csv")));
-    fid = fopen(strcat("imgKey",dataSetTitle,".txt"),'w');
+    fid = fopen(strcat(startingFolder,"\imgKey",dataSetTitle,".txt"),'w');
     for z = 1:length(imgKey)
         fprintf(fid,"%s %s\n",imgKey(z,:));
     end

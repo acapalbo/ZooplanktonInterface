@@ -16,7 +16,7 @@ function [identifiers,relVsNonRel] = saveImagesLineage(video_array,frameNum,bbox
         [l,w] = size(cell2mat(video_array(k)));
         fileNameFormat = sprintf('f%dx%dy%dw%dh%d_%s.png',frameNum,bboxes(k,1),bboxes(k,2),bboxes(k,3),bboxes(k,4),videoTitle); 
 
-        if (l < minLength | w < minWidth) & seperateSmallImages  
+        if (l < minLength & w < minWidth) & seperateSmallImages  
             img_file = strcat(outputDir,"\NonRelevantObjects_",videoTitle,"\",fileNameFormat);
             imwrite(uint8(cell2mat(video_array(k))),img_file);
             identifiers = cat(1,identifiers,string(fileNameFormat));
