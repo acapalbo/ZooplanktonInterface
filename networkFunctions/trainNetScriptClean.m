@@ -1,10 +1,13 @@
 clear
 dataSetPrepared = true;
-dataSetPath = "C:\Users\acapalbo\MatlabWorkspace\PreparedDatasetAugmentedDataSetV_4.2";
+% dataSetPath = "C:\Users\acapalbo\ZooplanktonInterface\PreparedDatasetAugmentedDataSetV_5.1";
 % rawDataSetPath = "C:\Users\acapalbo\Desktop\Combined_DataSet_v4.0";
-rawDataSetPath = "C:\Users\acapalbo\Desktop\CombinedDataset_v4.2_Augmented";
-DatasetTitle = "AugmentedDataSetV_4.2";
-networkArch = "Xception";
+% rawDataSetPath = "C:\Users\acapalbo\ZooplanktonInterface\PreparedDatasetAugmentedDataSetV_5.1";
+dataSetPath = "C:\Users\acapalbo\ZooplanktonInterface\PreparedDatasetAugmentedDataSetV_5.2";
+rawDataSetPath = "C:\Users\acapalbo\ZooplanktonInterface\PreparedDatasetAugmentedDataSetV_5.2";
+DatasetTitle = "AugmentedDataSetV_5.2";
+% networkArch = "GoogLe365";
+networkArch = "ResNet";
 % networkArch = "google365_w_batch";
 OODdataPath = "C:\Users\acapalbo\MatlabWorkspace\PreparedDatasetOODdataset600imgs";
 
@@ -13,16 +16,16 @@ if dataSetPrepared
     imgSizes = readmatrix(fullfile(dataSetPath,"imgSizes.csv"));
     disp("madeIt!")
 else
-    [imgKey,dataSetPath] = prepareDataset(pwd,rawDataSetPath,[229,229],string(1:4),DatasetTitle);
+    [imgKey,dataSetPath] = prepareDataset(pwd,rawDataSetPath,[229,229],string(1:2),DatasetTitle);
     imgSizes = double(imgKey(:,3:4));
     imgSizes = cat(2,imgSizes,(1:length(imgSizes))');
 end
 
 % net_1 = setupNetworkAdaptedXceptionDualInput();
 %net_1 = setupNetworkAdaptedXceptionDualInput();
-% net_1 = setupNetworkAdaptedResnetDualInput([229,229],4);
-% net_1 = setupNetworkAdaptedGoogle365DualInput([229,229],4);
-net_1 = setupNetworkAdaptedXceptionDualInput_batch([229,229],4);
+net_1 = setupNetworkAdaptedResnetDualInput([229,229],2);
+% net_1 = setupNetworkAdaptedGoogle365DualInput([229,229],7);
+% net_1 = setupNetworkAdaptedXceptionDualInput_batch([229,229],2);
 
 imds = imageDatastore(dataSetPath, ...
     IncludeSubfolders=true, ...
@@ -55,9 +58,9 @@ testingData = combine(imdsTest,arrayDatastore(testingSizes));
 
 TrainingOptions = trainingOptions("sgdm", ...
     MaxEpochs=5, ...
-    MiniBatchSize=64, ...
+    MiniBatchSize=128, ...
     ValidationData=valData, ...
-    ValidationFrequency=25, ...
+    ValidationFrequency=50, ...
     LearnRateSchedule="piecewise",...
     Plots="none", ...
     Metrics="accuracy", ...
@@ -67,7 +70,7 @@ TrainingOptions = trainingOptions("sgdm", ...
     LearnRateDropFactor=0.2,...
     Shuffle="every-epoch",...
     OutputNetwork="best-validation",...
-    ValidationPatience=5,...
+    ValidationPatience=50,...
     Verbose=true);
 
 trainedNet = trainnet(trainingData,net_1,"crossentropy",TrainingOptions);
@@ -186,8 +189,8 @@ arr = classAccPreRec(correctLabelstest2,uint16(newLabels));
 idx_95 = find(cumsum(explained)>95,1);
 OODscores = (trainingScoresOOD-mu)*coeff(:,1:idx_95);
 % [SVMseperator,tf,SVMscores] = ocsvm(trainingScoresID(double(imdsTest.Labels) == 1,:));
-[SVMseperator,tf,SVMscores] = ocsvm(trainingScoresID);
-save(strcat(DatasetTitle,"_trainedNet_",networkArch,"_",string(datetime("today","Format","DD_MM_yy"))),"")
+[trainedSeperator,tf,SVMscores] = ocsvm(trainingScoresID);
+% save(strcat(DatasetTitle,"_trainedNet_",networkArch,"_",string(datetime("today","Format","DD_MM_yy"))),"")
 
 % % [SVMseperator,tf,SVMscores] = iforest(trainingScoresID);
 % % [SVMseperator,tf,SVMscores] = rrcforest(PCAscore(:,1:idx_95));

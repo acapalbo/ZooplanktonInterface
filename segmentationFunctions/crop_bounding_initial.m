@@ -41,6 +41,6 @@ function cropped_img = crop_bounding_initial(base_img,bounding_pos,pad)
         padl = padl + pad - padr;
     end
 
-    cropped_img = base_img(bounding_pos(2) - padt:bounding_pos(2) + bounding_pos(4) + padb, ...
-        bounding_pos(1)-padl:bounding_pos(1)+bounding_pos(3)+padr,:);
+    cropped_img = base_img(max(bounding_pos(2) - padt,1):min(bounding_pos(2) + bounding_pos(4) + padb,l), ...
+        max(bounding_pos(1)-padl,1):min(bounding_pos(1)+bounding_pos(3)+padr,w),:);
 end

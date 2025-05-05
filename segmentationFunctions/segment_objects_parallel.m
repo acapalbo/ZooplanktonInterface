@@ -51,8 +51,10 @@ function dataSetFilePath = segment_objects_parallel(vid,BW,h_vars,videoPath,save
         tempBW = BWconst.Value(:,:,k - FBframes(1):k+FBframes(2));
         final_bboxes = segment_objects_core(tempBW,1 + FBframes(1),raw_frame,h_vars);
         final_bboxes(all(final_bboxes == 0,2),:) = [];
+        size(final_bboxes)
+        if size(final_bboxes,1) > 1
         objectArray = segmented_object_cleanup(final_bboxes,raw_frame);
-        if size(objectArray,3) > 1
+        % size(objectArray,3)
         % fprintf("%d objects saved to 'Valid'\n", size(objectArray,3));
         
         [identifiers,relVsNonRel] = saveImagesLineage(objectArray,k,final_bboxes,videoPath,saveTrashImages, minLength,minWidth,outputDir);

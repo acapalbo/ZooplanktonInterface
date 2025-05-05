@@ -1,13 +1,15 @@
 function batchClassify(appProgress,datasetsFolder,netTable,performBinning,seperateTrash,imgSize,confidenceThreshold,outputDir)
     logitLayer = "batchnorm";
-    classNames = string(1:4);
+    % classNames = string(1:7);
     mkdir(outputDir)
+    fileParts = strsplit(outputDir,"\");
+    basePath = strjoin(fileParts(1:end-1),"\");
     datasetFiles = dir(datasetsFolder);
     for z = 3:length(datasetFiles)
-        tempFiles = dir(fullfile(datasetsFolder,datasetFiles(z).name))
-        datasetPath = fullfile(datasetsFolder,datasetFiles(z).name,tempFiles(3).name)
+        tempFiles = dir(fullfile(datasetsFolder,datasetFiles(z).name));
+        datasetPath = fullfile(datasetsFolder,datasetFiles(z).name,tempFiles(3).name);
         appProgress.Text = strcat(string(round((z-3)/(length(datasetFiles)-3)*100,2)),"%");
-        dataSetName = tempFiles(3).name
+        dataSetName = tempFiles(3).name;
         if seperateTrash && performBinning
             binBoundaries = netTable.boundaries;
             theta = netTable.theta;
@@ -27,9 +29,12 @@ function batchClassify(appProgress,datasetsFolder,netTable,performBinning,sepera
             [~,~,~] = classifySegmentedImagesIsotonic(netTable.trainedNet,datasetPath,tempUniform,confidenceThreshold,outputDir,theta,binBoundaries,dataSetName,tempImgKey);
         elseif ~seperateTrash && ~performBinning
             [tempImgKey,tempUniform] = prepareDatasetSingleClass(outputDir,datasetPath,imgSize,dataSetName);
-            classifySegmentedImages(netTable.trainedNet,datasetPath,tempUniform,confidenceThreshold,outputDir,dataSetName,tempImgKey);
+            if isstring(tempImgKey)
+                classifySegmentedImages(netTable.trainedNet,datasetPath,tempUniform,confidenceThreshold,outputDir,dataSetName,tempImgKey);
+            end
         end
 
     end
+    zipOutputFolders(basePath)
 end
 

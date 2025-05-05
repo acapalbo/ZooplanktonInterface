@@ -29,7 +29,7 @@ function batchFlatField(appProgress,filePath,outputDir,FFmethod)
             fprintf("<strong>%s</strong> failed to write.\n",videoFiles(z).name);
             continue
         end
-
+        clear tempVid calFrame ffVid
     end
     tEnd = toc(tStart);
     fprintf("Total time: %.3f seconds\n",tEnd)

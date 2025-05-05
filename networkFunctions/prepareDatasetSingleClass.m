@@ -30,12 +30,16 @@ globalIter = 1;
     end
 
     % cd(startingFolder)
-    imgSizes = imgKey(:,3:end);
-    imgSizes = cat(2,imgSizes,(1:length(imgSizes))');
-    writematrix(imgSizes,fullfile(startingFolder,strcat("PreparedDataset",dataSetTitle,"/imgSizes.csv")));
-    fid = fopen(strcat(startingFolder,"\imgKey",dataSetTitle,".txt"),'w');
-    for z = 1:length(imgKey)
-        fprintf(fid,"%s %s\n",imgKey(z,:));
+    if exist("imgKey")
+        imgSizes = imgKey(:,3:end);
+        imgSizes = cat(2,imgSizes,(1:length(imgSizes))');
+        writematrix(imgSizes,fullfile(startingFolder,strcat("PreparedDataset",dataSetTitle,"/imgSizes.csv")));
+        fid = fopen(strcat(startingFolder,"\imgKey",dataSetTitle,".txt"),'w');
+        for z = 1:length(imgKey)
+            fprintf(fid,"%s %s\n",imgKey(z,:));
+        end
+        fclose(fid);
+    else
+        imgKey = -1;
     end
-    fclose(fid);
 end
