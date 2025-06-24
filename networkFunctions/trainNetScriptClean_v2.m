@@ -1,31 +1,33 @@
 clear
-dataSetPrepared = false;
+dataSetPrepared = true;
+tStart = tic;
 % dataSetPath = "C:\Users\acapalbo\ZooplanktonInterface\PreparedDatasetAugmentedDataSetV_5.1";
 % rawDataSetPath = "C:\Users\acapalbo\Desktop\Combined_DataSet_v4.0";
 % rawDataSetPath = "C:\Users\acapalbo\ZooplanktonInterface\PreparedDatasetAugmentedDataSetV_5.1";
-dataSetPath = "C:\Users\acapalbo\ZooplanktonInterface\PreparedDatasetAugmentedDataSetV_5.2";
-rawDataSetPath = "C:\Users\acapalbo\ZooplanktonInterface\PreparedDatasetAugmentedDataSetV_5.2";
-DatasetTitle = "AugmentedDataSetV_6.0";
+dataSetPath = "C:\Users\acapalbo\ZooplanktonInterface\PreparedDatasetAugmentedDataSetV_6.1";
+DatasetTitle = "AugmentedDataSetV_6.1";
 % networkArch = "GoogLe365";
-networkArch = "ResNet";
+% networkArch = "ResNet";
+% networkArch = "DarkNet";
+networkArch = "Xception";
 % networkArch = "google365_w_batch";
-OODdataPath = "C:\Users\acapalbo\MatlabWorkspace\PreparedDatasetOODdataset600imgs";
 
 if dataSetPrepared
-    % dataSetPath = fullfile(pwd,strcat("PreparedDataset",DatasetTitle,"\DataSet"));
     imgSizes = readmatrix(fullfile(dataSetPath,"imgSizes.csv"));
     disp("madeIt!")
 else
-    [imgKey,dataSetPath] = prepareDataset(pwd,rawDataSetPath,[229,229],string(1:6),DatasetTitle);
+    [imgKey,dataSetPath] = prepareDataset(pwd,dataSetPath,[229,229],string(1:6),DatasetTitle);
     imgSizes = double(imgKey(:,3:4));
     imgSizes = cat(2,imgSizes,(1:length(imgSizes))');
 end
 
 % net_1 = setupNetworkAdaptedXceptionDualInput();
 %net_1 = setupNetworkAdaptedXceptionDualInput();
-net_1 = setupNetworkAdaptedResnetDualInput([229,229],2);
-% net_1 = setupNetworkAdaptedGoogle365DualInput([229,229],7);
-% net_1 = setupNetworkAdaptedXceptionDualInput_batch([229,229],2);
+% net_1 = setupNetworkAdaptedResnetDualInput([229,229],6);
+% net_1 = setupNetworkAdaptedDarkNetDualInput([229,229],6);
+
+% net_1 = setupNetworkAdaptedGoogle365DualInput([229,229],6);
+net_1 = setupNetworkAdaptedXceptionDualInput_batch([229,229],6);
 
 imds = imageDatastore(dataSetPath, ...
     IncludeSubfolders=true, ...
@@ -57,12 +59,11 @@ trainingData = combine(imdsTrain,arrayDatastore(trainingSizes),arrayDatastore(im
 testingData = combine(imdsTest,arrayDatastore(testingSizes));
 
 TrainingOptions = trainingOptions("sgdm", ...
-    MaxEpochs=5, ...
+    MaxEpochs=15, ...
     MiniBatchSize=128, ...
     ValidationData=valData, ...
     ValidationFrequency=50, ...
     LearnRateSchedule="piecewise",...
-    Plots="none", ...
     Metrics="accuracy", ...
     InitialLearnRate=0.01, ...
     ExecutionEnvironment="gpu",...
@@ -70,8 +71,18 @@ TrainingOptions = trainingOptions("sgdm", ...
     LearnRateDropFactor=0.2,...
     Shuffle="every-epoch",...
     OutputNetwork="best-validation",...
-    ValidationPatience=50,...
     Verbose=true);
+    % ValidationPatience=50,
+    % Plots="none", ...
+    
+
+tEnd = toc(tStart);
+fprintf("Time taken to prepare datastore: %.2f s or %.2f min\n",tEnd,tEnd/60);
+save(strcat("netTrainingVars\",string(datetime("now","Format","ddMMyy_HH_mm_ss")),"_",networkArch,"trainingVars.mat"),"TrainingOptions","imdsTest","imdsTrain","imdsValidation","valData","trainingData","testingData","imgSizes");
+%% train network
+load netTrainingVars\100625_10_15_43_XceptiontrainingVars.mat% 15 epochs
+net_1 = setupNetworkAdaptedDarkNetDualInput([229,229],6);
+networkArch = "Darknet";
 
 trainedNet = trainnet(trainingData,net_1,"crossentropy",TrainingOptions);
 
@@ -84,7 +95,10 @@ accuracy = mean(labels == correctLabels);
 
 fprintf("PreCalibrated Accuracy: %.2f\n",accuracy);
 
-[imdsTest1,imdsTest2] = splitEachLabel(imdsTest,0.50,0.50,"randomized");
+accPrecRec = classAccPreRec(correctLabels,labels);
+%% Calibration
+clearvars -except imdsTrain imdsTest imdsValidation trainedNet dataSetPath imgSizes networkArch
+[imdsTest1,imdsTest2] = splitEachLabel(imdsTest,0.75,0.250,"randomized");
 
 calTestingSizes1 = [0,0];
 
@@ -112,7 +126,7 @@ scores = minibatchpredict(trainedNet,calTestingData1);
 scores2 = minibatchpredict(trainedNet,calTestingData2);
 
 classNames = 1:size(scores,2);
-stepSize = 100;
+stepSize = 50;
 
 for i = 1:size(scores,2)
     fprintf("<strong>Class %d:\n</strong>",i)
@@ -154,6 +168,12 @@ for i = 1:size(scores,2)
     end
 end
 
+[~,calibratedClassLabels] = max(totalConf,[],2);
+fprintf("<strong>Final Calibrated Accuracy: %.4f</strong>\n",mean(calibratedClassLabels == correctLabelstest2));
+save(strcat("trainedNetworks\adapted",networkArch,"_DS_v6.1.mat"),"trainedNet","totalBoundaries","totalTheta")
+
+%% save network
+%%
 OODimgSet = fullfile(OODdataPath,"DataSet");
 OODdata = imageDatastore(OODimgSet, ...
     IncludeSubfolders=true, ...

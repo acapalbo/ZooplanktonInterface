@@ -1,6 +1,5 @@
 % zip classified folders
 function zipOutputFolders(outputPath)
-    numClasses = 7;
     % outputPath = "C:\Users\acapalbo\ZooPlanktonOutputs_Cdrive\ZooPlanktonBatchOutput_032625(1)";
     outputFiles = dir(outputPath);
     fileNames = struct2table(outputFiles).name;
@@ -13,6 +12,9 @@ function zipOutputFolders(outputPath)
     fileName = sprintf("%02d-%02d-%02d %02d-%02d-%02d.%03d",numbers(2),numbers(3),numbers(4),numbers(5),numbers(6),numbers(7),numbers(8));
     mkdir(fileName);
     f = waitbar(0,"Zip Progress");
+
+    numClasses = length(dir(fullfile(outputPath,"ClassificationOutput",cell2mat(rawImgs(1)))))-2;
+    
     for z = 1:length(rawImgs)
         for k = 1:numClasses
             mkdir(fullfile(outputPath,classDir,rawImgs(z),sprintf("%d_reclassified",k)))

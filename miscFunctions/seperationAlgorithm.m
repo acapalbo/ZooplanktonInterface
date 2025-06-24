@@ -1,7 +1,7 @@
 %% Read in Data
 clear; clc;
 % dataSetPath = "C:\Users\acapalbo\Desktop\SimulatedDataset";
-dataSetPath = "C:\Users\acapalbo\Desktop\sortingTesting_043025\DataSet_MyCamera-004-2024-08-28 20-53-36.366precise_ff";
+dataSetPath = "C:\Users\acapalbo\ZooPlanktonOutputs_Cdrive\ZooPlanktonBatchOutput_062025\ClassificationOutput\ClassifiedRawImages_DataSet_MyCamera-001-2025-04-27 02-07-43.173precise_ff\5";
 
 imds = imageDatastore(dataSetPath, ...
 IncludeSubfolders=true, ...
@@ -18,14 +18,14 @@ maxDirs = [];
 for z = 1:length(totalYDir)
     tempDir = cell2mat(totalYDir(z));
     idx = find(tempDir == max(tempDir));
-    if idx >= 45 & idx <= 46 & max(tempDir)*100 >= 1
+    if idx >= 45 & idx <= 46 & max(tempDir)*100 >= .6
         bubbleMarker = cat(1,bubbleMarker,1);
     else
         bubbleMarker = cat(1,bubbleMarker,0);
     end
     maxDirs = cat(1,maxDirs,max(tempDir));
 end
-
+bubbleMarker = logical(bubbleMarker);
 bubbleImgs = imageFiles(logical(bubbleMarker));
 resizedImgs = [];
 for z = 1:length(bubbleImgs)
@@ -35,8 +35,41 @@ for z = 1:length(bubbleImgs)
 % imshow(cell2mat(bubbleImgs(z)))
 % pause(1.5)
 end
-% tiledImg = imtile(resizedImgs);
-% imshow(tiledImg)
+tiledImg = imtile(resizedImgs);
+imshow(tiledImg)
+imdsFiles = imds.Files;
+
+everythingExceptBubs = imdsFiles(~bubbleMarker);
+mkdir RemovedBubbles
+
+for z = 1:length(everythingExceptBubs)
+    [~,tempName,~]=fileparts(string(everythingExceptBubs(z)));
+    copyfile(string(everythingExceptBubs(z)),fullfile("RemovedBubbles",strcat(tempName,".png")))
+end
+
+%% Seperate less than 20% width images
+sizes = [];
+edgeSegmentMarker = [];
+for z = 1:length(everythingExceptBubs)
+    tempImg = imread(string(everythingExceptBubs(z)));
+    tempSize = size(tempImg);
+    if tempSize(2) <= tempSize(1)*0.2
+        edgeSegmentMarker = cat(1,edgeSegmentMarker,1);
+    else
+        edgeSegmentMarker = cat(1,edgeSegmentMarker,0);
+    end
+    sizes = cat(1,sizes,tempSize);
+end
+edgeSegmentMarker = logical(edgeSegmentMarker);
+everythingExceptError = everythingExceptBubs(~edgeSegmentMarker);
+
+mkdir CleanSorted
+
+for z = 1:length(everythingExceptError)
+    [~,tempName,~] = fileparts(string(everythingExceptError(z)));
+    copyfile(string(everythingExceptError(z)),fullfile("CleanSorted",strcat(tempName,".png")))
+end
+scatter(sizes(:,1),sizes(:,2))
 %% Gradient threshold
 
 maxMags = [];

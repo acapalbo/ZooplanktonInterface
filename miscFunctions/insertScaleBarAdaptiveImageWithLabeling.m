@@ -11,7 +11,7 @@ function insertedScaleBar = insertScaleBarAdaptiveImageWithLabeling(imgPath, sca
         if barThickness < 2
             barThickness = 2;
         end
-        pixelLength = floor(w/2);
+        pixelLength = floor(w/4);
         measuredLength = pixelLength*conversionFactor;
         % barPos = [(l - 6)*scaleFactor,(l - 5)*scaleFactor,(w - floor(pixelLength) - 5)*scaleFactor,(w - 5)*scaleFactor];
         img = imresize(img,scaleFactor,"bilinear");
@@ -29,7 +29,7 @@ function insertedScaleBar = insertScaleBarAdaptiveImageWithLabeling(imgPath, sca
         measuredLength = deci + floor(measuredLength);
         fontSize = max(min(floor(w*0.03),200),15);
         insertedScaleBar = insertText(img, textPos,strcat(num2str(measuredLength)," ",units),FontSize = fontSize, AnchorPoint="CenterBottom",BoxOpacity=0);
-        insertedScaleBar = insertText(insertedScaleBar,labelPos,columnLetter(k),FontSize = labelFont, AnchorPoint="LeftBottom",BoxOpacity=0.6,BoxColor = "yellow");
+        % insertedScaleBar = insertText(insertedScaleBar,labelPos,columnLetter(k),FontSize = labelFont, AnchorPoint="LeftBottom",BoxOpacity=0.6,BoxColor = "yellow");
         % imgPath = char(imgPath);
         % strcat(imgPath(1:end-4),"scaleBar.png")
         % imwrite(insertedScaleBar,strcat(imgPath(1:end-4),"scaleBar.png"))

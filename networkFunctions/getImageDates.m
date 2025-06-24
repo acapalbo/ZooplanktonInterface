@@ -17,7 +17,12 @@ function dateCounts = getImageDates(varargin)
         tbl = struct2table(imgs);
         fileNames = tbl.name;
         fileNames(1:2) = [];
+        try
         imgDates = extract(fileNames,datePattern);
+        catch ME
+            fileNames(6604)
+            rethrow(ME)
+        end
         uniqueDates = unique(imgDates);
         if exist("totalDates")
             totalDates = cat(1,totalDates,uniqueDates);
