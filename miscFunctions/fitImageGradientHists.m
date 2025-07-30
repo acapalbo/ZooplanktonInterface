@@ -1,4 +1,4 @@
-function [totalYMag,totalYDir,datasetForm,imageFiles] = fitImageGradientHists(varargin)
+function [totalYMag,totalYDir,datasetForm,imageFilePaths] = fitImageGradientHists(varargin)
     numSamples = 90;
     maxGmag = 0;
     maxGdir = 0;
@@ -14,10 +14,10 @@ function [totalYMag,totalYDir,datasetForm,imageFiles] = fitImageGradientHists(va
     totalGmag = {};
     totalGdir = {};
     datasetForm = {};
-    imageFiles = {};
+    imageFilePaths = {};
     for z = 3:length(imgFiles)
         tempImg = imread(fullfile(imgPath,imgFiles(z).name));
-        imageFiles = cat(1,imageFiles,tempImg);
+        imageFilePaths = cat(1,imageFilePaths,fullfile(imgPath,imgFiles(z).name));
         [Gmag,Gdir] = imgradient(tempImg(:,:,1));
         totalGmag = cat(1,totalGmag,{Gmag});
         totalGdir = cat(1,totalGdir,{Gdir});
@@ -34,15 +34,5 @@ function [totalYMag,totalYDir,datasetForm,imageFiles] = fitImageGradientHists(va
         totalYMag = cat(1,totalYMag,yValuesMag);
         totalYDir = cat(1,totalYDir,yValuesDir);
         datasetForm = cat(1,datasetForm,{cat(2,yValuesMag,yValuesDir)});
-    end
-    figure()
-    hold on
-    for z = 1:length(totalYMag)
-        plot(linspace(0,400,numSamples),cell2mat(totalYMag(z)),'.');
-    end
-    figure()
-    hold on
-    for z = 1:length(totalYDir)
-        plot(linspace(-180,180,numSamples),cell2mat(totalYDir(z)),'.');
     end
 end

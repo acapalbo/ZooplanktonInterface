@@ -11,7 +11,6 @@ function flatfielded_video = standardFlatfield_v2(original, brightness)
     average_values = uint16(mean(mean(original)));
 
     calibration_frame = calibrateV2(original(:,:,1:k));
-    size(average_values)
     average_values = squeeze(average_values);
     flatfielded_video = zeros(length, width, num_frames, 'uint8');
     for z = 1:num_frames

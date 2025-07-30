@@ -4,7 +4,7 @@ function final_bboxes = segment_objects_core(BW,frame_idx,raw_frame,h_vars)
     props = regionprops(base_frame, 'BoundingBox','PixelIdxList');
 
     [detections,~] = size(props);
-    fprintf("Detected %d objects\n", detections);
+    % fprintf("Detected %d objects\n", detections);
     
     final_bboxes=zeros(detections,4,"uint16");
     

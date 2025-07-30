@@ -12,5 +12,7 @@ function arr = classAccPreRec(correctLabels,predictedLabels)
         arr = cat(2,arr,[Rec,Prec]); 
     end
     Acc = mean(correctLabels == predictedLabels);
-    arr(1) = Acc;
+    arr(1) = [];
+    arr = cat(2,arr,Acc);
+    
 end

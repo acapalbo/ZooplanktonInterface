@@ -1,5 +1,5 @@
 % imgDir = "C:\Users\acapalbo\HBOI_Work\CompiledDataset\3";
-imgDir = "C:\Users\acapalbo\Desktop\CompiledDataset\3";
+imgDir = "C:\Users\acapalbo\ZooplanktonInterface\testDir";
 
 imgFiles = dir(imgDir);
 allData = {};

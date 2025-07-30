@@ -1,8 +1,7 @@
-function net = setupNetworkAdaptedXceptionDualInput()
+function net = setupNetworkAdaptedXceptionDualInput(imgSize,numClasses)
 net = dlnetwork;
-
 tempNet = [
-    imageInputLayer([299 299 1],"Name","input_1")
+    imageInputLayer(imgSize,"Name","input_1")
     convolution2dLayer([3 3],32,"Name","block1_conv1","BiasLearnRateFactor",0,"Stride",[2 2])
     batchNormalizationLayer("Name","block1_conv1_bn","Epsilon",0.001)
     reluLayer("Name","block1_conv1_act")
@@ -251,25 +250,26 @@ net = addLayers(net,tempNet);
 
 tempNet = [
     concatenationLayer(1,2,"Name","concat")
-    fullyConnectedLayer(4,"Name","fc")
+    batchNormalizationLayer("Name","batchnorm")
+    reluLayer("Name","relu")
+    fullyConnectedLayer(numClasses,"Name","fc")
     softmaxLayer("Name","predictions_softmax")];
 net = addLayers(net,tempNet);
 
 % clean up helper variable
 clear tempNet;
-
 net = connectLayers(net,"block1_conv2_act","block2_sepconv1_channel-wise");
 net = connectLayers(net,"block1_conv2_act","conv2d_1");
-net = connectLayers(net,"batch_normalization_1","add_1/in2");
 net = connectLayers(net,"block2_pool","add_1/in1");
+net = connectLayers(net,"batch_normalization_1","add_1/in2");
 net = connectLayers(net,"add_1","block3_sepconv1_act");
 net = connectLayers(net,"add_1","conv2d_2");
-net = connectLayers(net,"batch_normalization_2","add_2/in2");
 net = connectLayers(net,"block3_pool","add_2/in1");
+net = connectLayers(net,"batch_normalization_2","add_2/in2");
 net = connectLayers(net,"add_2","block4_sepconv1_act");
 net = connectLayers(net,"add_2","conv2d_3");
-net = connectLayers(net,"batch_normalization_3","add_3/in2");
 net = connectLayers(net,"block4_pool","add_3/in1");
+net = connectLayers(net,"batch_normalization_3","add_3/in2");
 net = connectLayers(net,"add_3","block5_sepconv1_act");
 net = connectLayers(net,"add_3","add_4/in2");
 net = connectLayers(net,"block5_sepconv3_bn","add_4/in1");
@@ -296,9 +296,9 @@ net = connectLayers(net,"add_10","add_11/in2");
 net = connectLayers(net,"block12_sepconv3_bn","add_11/in1");
 net = connectLayers(net,"add_11","block13_sepconv1_act");
 net = connectLayers(net,"add_11","conv2d_4");
-net = connectLayers(net,"batch_normalization_4","add_12/in2");
 net = connectLayers(net,"block13_pool","add_12/in1");
-net = connectLayers(net,"featureinput","concat/in1");
+net = connectLayers(net,"batch_normalization_4","add_12/in2");
 net = connectLayers(net,"flatten","concat/in2");
+net = connectLayers(net,"featureinput","concat/in1");
 net = initialize(net);
 end
