@@ -1,7 +1,10 @@
-function [newScores,softMaxScores,rawScores] = classifySegmentedImagesIsotonic(trainedNet,rawdataSetPath,uniformDatasetPath,confidenceThreshold,dirLocation,theta,boundaries,DatasetTitle,imgKey)
+function classCounts = classifySegmentedImagesIsotonic(trainedNetTable,rawdataSetPath,uniformDatasetPath,confidenceThreshold,dirLocation,DatasetTitle,imgKey)
         imds = imageDatastore(uniformDatasetPath, ...
             IncludeSubfolders=true, ...
             LabelSource="foldernames");
+        theta = trainedNetTable.totalTheta;
+        trainedNet = trainedNetTable.trainedNet;
+        boundaries = trainedNetTable.totalBoundaries;
         [l,w] = size(imds.preview);
         imgSizes = arrayDatastore(double(imgKey(:,3:4)));
         data = combine(imds,imgSizes);
@@ -9,8 +12,8 @@ function [newScores,softMaxScores,rawScores] = classifySegmentedImagesIsotonic(t
         rawScores = scores;
         
         for z = 1:size(scores,2)
-            tempBounds = boundaries(z);
-            tempTheta  = theta(z);
+            tempBounds = cell2mat(boundaries(z));
+            tempTheta  = cell2mat(theta(z));
             calibratedScores = calibrateConfidence(tempBounds,tempTheta,scores(:,z));
             if exist("newScores")
                 newScores = cat(2,newScores,calibratedScores);

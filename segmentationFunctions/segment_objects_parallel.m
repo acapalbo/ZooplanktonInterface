@@ -35,7 +35,7 @@ function dataSetFilePath = segment_objects_parallel(vid,BW,h_vars,videoPath,save
     
     parfor(k = 1:frame_num,opts)
         startT = strcat(num2str(k,'%04.f'),string(datetime('now','TimeZone','local','Format','HHmmss')));
-        % fprintf("Beginning frame <strong>%d<\strong> out of <strong>%d<\strong>\n",k,frame_num)
+        % fprintf("Beginning frame <strong>%d</strong> out of <strong>%d</strong>\n",k,frame_num)
         raw_frame = vidConst.Value(:,:,k);
         FBframes = [h_vars(5) h_vars(5)];
 
