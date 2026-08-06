@@ -9,7 +9,7 @@ dataSetPath = strcat(startingFolder,"\PreparedDataset",dataSetTitle);
 %    FileNames=Files(k).name
 % end
 globalIter = 1;
-
+imgKey = [];
     mkdir(strcat(startingFolder,"\PreparedDataset",dataSetTitle,"\DataSet\1"))
     imgs = dir(srcFolder);
     for z=3:length(imgs)
@@ -21,25 +21,29 @@ globalIter = 1;
         imwrite(img,fullfile(startingFolder,strcat("PreparedDataset",dataSetTitle,"\DataSet"),num2str(1), ...
             strcat(num2str(globalIter,'%04.f'),".png")));
         % movefile(imgs(z).name,strcat(num2str(globalIter,'%03.f'),".png"));
+        imgKey = cat(1,imgKey,[imgs(z).name,strcat(num2str(globalIter,'%04.f'),".png"),l,w]);
         globalIter = globalIter + 1;
-        if exist("imgKey")
-            imgKey = cat(1,imgKey,[imgs(z).name,strcat(num2str(globalIter-1,'%04.f'),".png"),l,w]);
-        else
-            imgKey = [imgs(z).name,strcat(num2str(globalIter-1,'%04.f'),".png"),l,w];
-        end
+
+        % if exist("imgKey")
+        %     imgKey = cat(1,imgKey,[imgs(z).name,strcat(num2str(globalIter-1,'%04.f'),".png"),l,w]);
+        % else
+        %     imgKey = [imgs(z).name,strcat(num2str(globalIter-1,'%04.f'),".png"),l,w];
+        % end
     end
 
     % cd(startingFolder)
-    if exist("imgKey")
-        imgSizes = imgKey(:,3:end);
-        imgSizes = cat(2,imgSizes,(1:length(imgSizes))');
-        writematrix(imgSizes,fullfile(startingFolder,strcat("PreparedDataset",dataSetTitle,"/imgSizes.csv")));
-        fid = fopen(strcat(startingFolder,"\imgKey",dataSetTitle,".txt"),'w');
-        for z = 1:length(imgKey)
-            fprintf(fid,"%s %s\n",imgKey(z,:));
-        end
-        fclose(fid);
-    else
-        imgKey = -1;
-    end
+    % if exist("imgKey")
+    %     imgSizes = imgKey(:,3:end);
+    %     imgSizes = cat(2,imgSizes,(1:length(imgSizes))');
+    %     writematrix(imgSizes,fullfile(startingFolder,strcat("PreparedDataset",dataSetTitle,"/imgSizes.csv")));
+    %     fid = fopen(strcat(startingFolder,"\imgKey",dataSetTitle,".txt"),'w');
+    %     for z = 1:length(imgKey)
+    %         fprintf(fid,"%s %s\n",imgKey(z,:));
+    %     end
+    %     fclose(fid);
+    % else
+    %     imgKey = -1;
+    % end
+    imgKey = array2table(imgKey,'VariableNames',["rawFileName","uniformFileName","length","width"]);
+    writetable(imgKey,fullfile(startingFolder,strcat("PreparedDataset",dataSetTitle,"/imgSizes.csv")));
 end

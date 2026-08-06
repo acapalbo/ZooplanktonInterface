@@ -11,5 +11,5 @@ function frames = read_avi(filename)
     % frames = reshape(frames,[l,w,frameNum]);
     clear v
     tEnd = toc(tStart);
-    fprintf("<strong>Read Time: %.3f s</strong>\n",tEnd)
+    % fprintf("<strong>Read Time: %.3f s</strong>\n",tEnd)
 end

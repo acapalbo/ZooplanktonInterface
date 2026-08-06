@@ -2,6 +2,8 @@
 function write_avi(frames,filename)
     tStart = tic;
     v = VideoWriter(filename,"Grayscale AVI");
+    v.FrameRate = 10;
+    % v.Quality = 80;
     open(v)
     writeVideo(v, frames)
     close(v)

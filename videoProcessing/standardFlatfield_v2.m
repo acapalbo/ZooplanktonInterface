@@ -2,11 +2,11 @@
 % brightness (usually 0.80-1.20), outputs flat-fielded video (3-D uint8 array)
 
 % static, raw flatfielding (very fast)
-function flatfielded_video = standardFlatfield_v2(original, brightness)
+function flatfielded_video = standardFlatfield_v2(original, brightness, num_cal_frames)
 
     % initialize variables
     [length, width, num_frames] = size(original);
-    k = 10;
+    k = min(num_cal_frames,num_frames);
     % find average pixel value for each frame
     average_values = uint16(mean(mean(original)));
 

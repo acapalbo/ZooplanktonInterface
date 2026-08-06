@@ -65,7 +65,7 @@ function dataSetFilePath = segment_objects_parallel(vid,BW,h_vars,videoPath,save
         end
     end
     tEnd = toc(tStart);
-    fprintf("<strong>Total Segmentation Time: %f s</strong>\n",tEnd)
+    % fprintf("<strong>Total Segmentation Time: %f s</strong>\n",tEnd)
     dataSetFilePath = strcat(outputDir,"\DataSet_",vidFileName);
     % begin sorting
 end

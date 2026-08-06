@@ -2,7 +2,10 @@
 function [newY,blockStartPoints] = isotonicReg(Y,xVals)
     BlockCells = mat2cell(Y,ones(size(Y,1),1));
     blocks = Y;
-    blockStartPoints = xVals';
+    size(blocks)
+    size(BlockCells)
+    blockStartPoints = xVals;
+
     while true
         blockMeans = zeros(length(BlockCells),1);
         blockDiffs = zeros(length(BlockCells)-1,1);
@@ -26,6 +29,8 @@ function [newY,blockStartPoints] = isotonicReg(Y,xVals)
         % blockStartPoints(idx)
         % blockStartPoints(idx+1)
         % pause
+        idx
+        blockStartPoints(idx+1)
         violators = blocks(blockStartPoints(idx):blockStartPoints(idx+1)+length(cell2mat(BlockCells(idx+1)))-1);
 
         poolLength = length(violators);

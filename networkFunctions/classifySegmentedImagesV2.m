@@ -33,7 +33,7 @@ function [rawScores,normScores,a,b] = classifySegmentedImagesV2(trainedNet,imds,
             end
         end
     else
-
+        
         [l,w] = size(imds.preview);
         scores = minibatchpredict(trainedNet,imds);
         rawScores = scores;

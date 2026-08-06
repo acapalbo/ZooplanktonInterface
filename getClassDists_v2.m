@@ -1,21 +1,33 @@
-function classCounts = getClassDists(vid,BWthresh,h_vars,videoPath,saveTrashImages,minLength,minWidth,outputDir,netTable,parallelPool)
-    BW = process_binary_videoV2(vid,BWthresh,h_vars);
-    [~,videoTitle,~] = fileparts(videoPath);
-    mkdir(fullfile(outputDir,"SegmentationData"))
-    % Gather segmented images
-    % fprintf("Starting Segmentation\n")
-
-    dataSetFilePath = segment_objects_parallel(vid,BW,h_vars,videoPath,saveTrashImages,minLength,minWidth,fullfile(outputDir,"SegmentationData"),parallelPool);
-    
-    
-    % imds = imageDatastore(dataSetFilePath, ...
-    %     IncludeSubfolders=true, ...
-    %     LabelSource="foldernames");
-    % imgSizes = getImgSizes(dataSetFilePath);
-    segFiles = dir(fullfile(outputDir,"SegmentationData"));
-    mkdir(fullfile(outputDir,"SegmentationData","BoxedValidationData"))
-    segFiles = struct2table(segFiles);
-    segFiles = segFiles.name;
+% Gelatinous niche counts
+function classCounts = getClassDists_v2(outputDir,netTable,parallelPool,videoTitle,abundanceDir)
+    % BW = process_binary_videoV2(vid,BWthresh,h_vars);
+    % [~,videoTitle,~] = fileparts(videoPath);
+    classificationDir = fullfile(outputDir,strcat("NicheClassification_",videoTitle));
+    files = struct2table(dir(abundanceDir));
+    files = string(files.name);
+    sortedDir = files(contains(files,"ClassificationOutput"));
+    sortedRaw = fullfile(abundanceDir,files(contains(files,"ClassifiedRaw")));
+    uniformDir = files(contains(files,"Prepared"));
+    dataSourceDir = fullfile(abundanceDir,sortedDir);
+    gelDir = fullfile(dataSourceDir,"5");
+    % abundanceDir
+    % uniformDir
+    imgKey = readtable(fullfile(abundanceDir,uniformDir,"imgSizes.csv"));
+    % mkdir(fullfile(outputDir,"SegmentationData"))
+    % % Gather segmented images
+    % % fprintf("Starting Segmentation\n")
+    % 
+    % dataSetFilePath = segment_objects_parallel(vid,BW,h_vars,videoPath,saveTrashImages,minLength,minWidth,fullfile(outputDir,"SegmentationData"),parallelPool);
+    % 
+    % 
+    % % imds = imageDatastore(dataSetFilePath, ...
+    % %     IncludeSubfolders=true, ...
+    % %     LabelSource="foldernames");
+    % % imgSizes = getImgSizes(dataSetFilePath);
+    % segFiles = dir(fullfile(outputDir,"SegmentationData"));
+    % mkdir(fullfile(outputDir,"SegmentationData","BoxedValidationData"))
+    % segFiles = struct2table(segFiles);
+    % segFiles = segFiles.name;
     % csvDir = fullfile(fullfile(outputDir,"SegmentationData"),segFiles(contains(segFiles,"Table")));
     % writeBoxedVideo(vid,csvDir,fullfile(outputDir,"SegmentationData","BoxedValidationData"),videoTitle)
     % numBins = 90;
@@ -55,9 +67,9 @@ function classCounts = getClassDists(vid,BWthresh,h_vars,videoPath,saveTrashImag
     % writeImages(nonBubbleOrError,outputDir,"CleanDataset")
     % fprintf("Finished Cleaning Dataset\n")
     % fprintf("Beginning Classification\n")
-    [tempImgKey,tempUniform] = prepareDatasetSingleClass(outputDir,dataSetFilePath,[229,229],videoTitle);
+    % [tempImgKey,tempUniform] = prepareDatasetSingleClass(outputDir,dataSetFilePath,[229,229],videoTitle);
     
-    classCounts = classifySegmentedImagesIsotonic(netTable,dataSetFilePath,tempUniform,0.7,outputDir,videoTitle,tempImgKey,true);
+    classCounts = classifySegmentedImagesIsotonic(netTable,sortedRaw,gelDir,0.5,classificationDir,videoTitle,imgKey,true);
     % fprintf("Classification Complete\n")
     
 end

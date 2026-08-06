@@ -1,9 +1,12 @@
 % takes video and method and produces final expanded binary version for
 % object detection
-function processed_vid = process_binary_videoV2(vid,thresh,h_vars)
-
-    BW = imclearborder(binarize(vid,thresh));
-
+function processed_vid = process_binary_videoV3(vid,h_vars)
+    
+    cellArr = mat2cell(vid,2048,2440,repmat(1,size(vid,3),1));
+    BW = cellfun(@(x) imclearborder(imbinarize(imgaussfilt(x,2),"adaptive"),4),cellArr,"UniformOutput",false);
+    BW = cell2mat(BW);
+    % BW = imclearborder(binarize(vid,thresh));
+    
     masked = mask_recurring_pixels(BW, h_vars(1));
     clear BW
     filtered = remove_small_objects(masked, h_vars(2));

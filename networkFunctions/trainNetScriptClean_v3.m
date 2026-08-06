@@ -1,11 +1,11 @@
 clear
-dataSetPrepared = false;
+dataSetPrepared = true;
 tStart = tic;
 % dataSetPath = "C:\Users\acapalbo\ZooplanktonInterface\PreparedDatasetAugmentedDataSetV_5.1";
 % rawDataSetPath = "C:\Users\acapalbo\Desktop\Combined_DataSet_v4.0";
 % rawDataSetPath = "C:\Users\acapalbo\ZooplanktonInterface\PreparedDatasetAugmentedDataSetV_5.1";
-% dataSetPath = "C:\Users\acapalbo\ZooplanktonInterface\PreparedDatasetAugmentedDataSetV_6.1";
-dataSetPath = "C:\Users\acapalbo\Desktop\AugmentedNicheDataset";
+dataSetPath = "C:\Users\acapalbo\HBOI_Work\PreparedDatasetAugmentedDataSetV_6.1";
+% dataSetPath = "C:\Users\acapalbo\Desktop\AugmentedNicheDataset";
 DatasetTitle = "AugmentedDataSet_NicheNetwork";
 % networkArch = "GoogLe365";
 % networkArch = "ResNet";
@@ -28,9 +28,9 @@ end
 % net_1 = setupNetworkAdaptedDarkNetDualInput([229,229],6);
 
 % net_1 = setupNetworkAdaptedGoogle365DualInput([229,229],6);
-net_1 = setupNetworkAdaptedXceptionDualInput_batch([229,229],6);
+net_1 = setupNetworkAdaptedXceptionDualInput([229,229],6);
 
-imds = imageDatastore(dataSetPath, ...
+imds = imageDatastore(fullfile(dataSetPath,"DataSet"), ...
     IncludeSubfolders=true, ...
     LabelSource="foldernames");
 
@@ -42,6 +42,7 @@ for z = 1:length(imdsTrain.Files)
     trainingSizes = cat(1,trainingSizes,[imgSizes(imgSizes(:,3) == double(extract(strParts(end),digitsPattern)),1:2)]);
 end
 trainingSizes = trainingSizes(2:end,:);
+error
 validationSizes = [0,0];
 for z = 1:length(imdsValidation.Files)
     strParts = strsplit(string(imdsValidation.Files(z)),'\');
